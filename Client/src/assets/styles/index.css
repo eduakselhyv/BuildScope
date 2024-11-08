@@ -1,0 +1,15 @@
+body {
+  margin: 0;
+  font-family: Azeret Mono, monospace;
+  font-optical-sizing: auto; 
+}
+
+.main {
+  display: flex;
+}
+
+.contentContainer {
+  height: 100vh;
+  overflow-y: scroll;
+  flex-grow: 1;
+}
