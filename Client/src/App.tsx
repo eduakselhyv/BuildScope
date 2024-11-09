@@ -2,6 +2,7 @@ import './assets/styles/index.css';
 import { NavBar } from './components';
 
 function App() {
+    // Function for switching active view
     function handleViewChange(newView: string){
         switch (newView) {
             case 'tasks':
@@ -15,7 +16,10 @@ function App() {
 
     return (
         <main>
-            <NavBar username='idk' changeView={handleViewChange}/>
+            <NavBar changeView={handleViewChange}/>
+            <div className='window-content'>
+                asdadasdasd
+            </div>
         </main>
     );
 }

@@ -39,4 +39,12 @@ nav div:hover {
 .user {
   margin: 70px auto;
   font-size: 20px;
+  text-align: center;
+}
+
+.logout {
+  font-size: 15px;
+  text-decoration: underline;
+  cursor: pointer;
+  color: lightgray;
 }

@@ -1,13 +1,23 @@
+import { useNavigate } from 'react-router-dom';
 import '../assets/styles/navbar.css';
 
+// Set up values for component
 interface InputProps {
-    username: string;
     changeView: (value: string) => void;
 }
 
-export function NavBar({ changeView, username }: InputProps) {
+export function NavBar({ changeView }: InputProps) {
+  const navigate = useNavigate();
+  
+  // Send signal to parent when an option is pressed
   function handleClick(value: string) {
     changeView(value);
+  }
+
+  // Logout function (change when server is implemented)
+  function logout() {
+    localStorage.removeItem('user');
+    navigate('/login');
   }
 
   return (
@@ -20,7 +30,8 @@ export function NavBar({ changeView, username }: InputProps) {
       </nav>
       <div className='usercontent'>
         <div className='user'>
-          {username}
+          {localStorage.getItem('user')}
+          <div className='logout' onClick={logout}>log out</div>
         </div>
       </div>
     </div>
