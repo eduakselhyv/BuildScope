@@ -24,9 +24,9 @@ export function NavBar({ changeView }: InputProps) {
     <div className="navbar">
       <h1>BuildScope</h1>
       <nav>
-        <div onClick={() => handleClick('tasks')}>Tasks</div>
-        <div onClick={() => handleClick('upload')}>Upload</div>
-        <div onClick={() => handleClick('users')}>Users</div>
+        <div className='sidebar-option' onClick={() => handleClick('tasks')}>Tasks</div>
+        <div className='sidebar-option' onClick={() => handleClick('upload')}>Upload</div>
+        <div className='sidebar-option disabled'>Users</div>
       </nav>
       <div className='usercontent'>
         <div className='user'>

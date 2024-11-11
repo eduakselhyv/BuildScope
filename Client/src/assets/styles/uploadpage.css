@@ -1,0 +1,52 @@
+.uploadholder {
+    display: flex;
+    flex-wrap: wrap;
+    width: 80%;
+    height: 80%;
+    background-color: lightgray;
+    border-radius: 20px;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+}
+
+form {
+    width: 70%;
+}
+
+input, textarea {
+    height: 40px;
+    font-size: 18px;
+    width: 100%;
+    background-color: #4d4d4d;
+    color: white;
+    margin-bottom: 10px;
+    border-radius: 10px;
+}
+
+textarea {
+    height: 300px;
+    min-width: 100%;
+    max-width: 100%;
+    min-height: 300px;
+    max-height: 400px;
+}
+
+input[type="file"] {
+    background-color: transparent;
+    color: black;
+    height: auto;
+    border-radius: 0;
+    margin-bottom: 60px;
+}
+
+input[type="submit"] {
+    height: 100px;
+    width: 50%;
+    margin: 0 auto;
+    display: block;
+    border-radius: 10px;
+    font-size: 30px;
+    font-weight: 200;
+    cursor: pointer;
+}

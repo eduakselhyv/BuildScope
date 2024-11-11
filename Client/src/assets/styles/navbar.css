@@ -16,7 +16,7 @@ h1 {
   padding: 20px;
 }
 
-nav div {
+.sidebar-option {
   padding: 15px 20px;
   text-decoration: none;
   font-size: 18px;
@@ -24,7 +24,7 @@ nav div {
   cursor: pointer;
 }
 
-nav div:hover {
+.sidebar-option:hover {
   background-color: #3a6f9f;
   border-radius: 5px;
 }
@@ -47,4 +47,12 @@ nav div:hover {
   text-decoration: underline;
   cursor: pointer;
   color: lightgray;
+}
+
+.disabled {
+  cursor: default;
+}
+
+.disabled:hover {
+  background-color: transparent;
 }

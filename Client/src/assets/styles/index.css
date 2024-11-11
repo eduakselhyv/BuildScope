@@ -11,5 +11,12 @@ body {
 .contentContainer {
   height: 100vh;
   overflow-y: scroll;
-  flex-grow: 1;
+  flex: 1;
+}
+
+.window-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
 }

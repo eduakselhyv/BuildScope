@@ -1,0 +1,67 @@
+.tasksholder {
+    display: flex;
+    flex-wrap: wrap;
+    width: 80%;
+    height: 80%;
+    background-color: lightgray;
+    border-radius: 20px;
+}
+
+.tasknav {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    height: 7%;
+}
+
+.task-option {
+    display: flex;
+    margin: 0 50px;
+    height: 100%;
+    width: 190px;
+    justify-content: center;
+    align-items: center;
+    border-radius: 15px;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+.task-option:hover {
+    text-decoration: underline 2px;
+}
+
+.task-content {
+    width: 100%;
+    height: 93%;
+    display: flex;
+    justify-content: center;
+    overflow: hidden;
+    overflow-y: auto;
+}
+
+.task-table {
+    height: 10px;
+    max-height: 80px;
+    width: 70%;
+    text-align: center;
+    border-spacing: 0;
+    margin-top: 20px;
+}
+
+th {
+    width: calc(100% / 3);
+    font-size: 18px;
+    font-weight: 400;
+}
+
+td {
+    border: 1px solid black;
+    padding: 6px 0;
+    background-color: #4d4d4d;
+    color: white;
+}
+
+.clickable-td:hover {
+    cursor: pointer;
+    text-decoration: underline;
+}
