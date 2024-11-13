@@ -1,18 +1,18 @@
 import { useState } from 'react';
 import '../assets/styles/login.css';
-import {Input} from '../components';
 import { useNavigate } from 'react-router-dom';
+import { Button, Field, Input } from '@fluentui/react-components';
 
 function LoginPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
-  const handleUsernameChange = (newValue: string) => {
+  const handleUsernameChange = (newValue: any) => {
     setUsername(newValue);
   };
   
-  const handlePasswordChange = (newValue: string) => {
+  const handlePasswordChange = (newValue: any) => {
     setPassword(newValue);
   };
 
@@ -26,20 +26,16 @@ function LoginPage() {
     <div className='login-holder'>
       <div className='login-card'>
         <div className='title'>Buildscope</div>
-        <Input
-          label='Username:'
-          onChange={handleUsernameChange}
-          placeholder='add username...'
-        />
 
-        <Input
-          label='Password:'
-          inputType='password'
-          onChange={handlePasswordChange}
-          placeholder='add password...'
-        />
+        <Field>
+            <Input type='text' onChange={handleUsernameChange} placeholder='Username' />
+        </Field>
 
-        <button onClick={logIn}>Log in</button>
+        <Field>
+            <Input type='password' onChange={handlePasswordChange} placeholder='Password' />
+        </Field>
+
+        <Button onClick={logIn}>Log in</Button>
       </div>  
     </div>
   );
