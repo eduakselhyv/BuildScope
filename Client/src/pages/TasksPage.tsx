@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import "../assets/styles/taskspage.css";
+import { Select, useId } from "@fluentui/react-components";
 
 interface Task {
   id: string; // Task id
@@ -8,14 +9,10 @@ interface Task {
   status: string; // Status of task
 }
 
-
 function TasksPage() {
   const [tasks, setTasks] = useState<Task[]>([]); // Variable for storing tasks
   const [taskView, setTaskView] = useState(''); // Variable for saving the status of current view
-
-  useEffect(() => {
-    
-  }, []);
+  const selectId = useId();
 
   function changeData(view: string) {
     setTaskView(view);
@@ -32,9 +29,14 @@ function TasksPage() {
         <div className='task-item'>
           <img className='task-img'/>
           <div className='task-name'>Placeholder name</div>
-          <select className='task-status'>
-            <option></option>
-          </select>
+          <label htmlFor={selectId}>Status</label>
+          <Select id={selectId} style={{
+
+          }}>
+            <option>ok</option>
+            <option>waiting</option>
+            <option>fail</option>
+          </Select>
         </div>
       </div>
     </div>
