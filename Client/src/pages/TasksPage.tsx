@@ -32,7 +32,7 @@ function TasksPage() {
         <div className='task-item'>
           <img className='task-img'/>
           <div className='task-name'>Placeholder name</div>
-          <select onChange={() => changeStatus()} className='task-status'>
+          <select className='task-status'>
             <option></option>
           </select>
         </div>

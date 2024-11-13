@@ -8,14 +8,6 @@ function LoginPage() {
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
-  const handleUsernameChange = (newValue: any) => {
-    setUsername(newValue);
-  };
-  
-  const handlePasswordChange = (newValue: any) => {
-    setPassword(newValue);
-  };
-
   // Change this logic once server is implemented
   function logIn() {
     localStorage.setItem('user', username);
@@ -28,11 +20,11 @@ function LoginPage() {
         <div className='title'>Buildscope</div>
 
         <Field>
-            <Input type='text' onChange={handleUsernameChange} placeholder='Username' />
+            <Input type='text' onChange={(e) => setUsername(e.target.value)} placeholder='Username' />
         </Field>
 
         <Field>
-            <Input type='password' onChange={handlePasswordChange} placeholder='Password' />
+            <Input type='password' onChange={(e) => setPassword(e.target.value)} placeholder='Password' />
         </Field>
 
         <Button onClick={logIn}>Log in</Button>
