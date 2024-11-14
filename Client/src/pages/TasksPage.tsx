@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import "../assets/styles/taskspage.css";
-import { Select, useId } from "@fluentui/react-components";
+import { Select, useId, Label } from "@fluentui/react-components";
 
 interface Task {
   id: string; // Task id
@@ -29,7 +29,7 @@ function TasksPage() {
         <div className='task-item'>
           <img className='task-img'/>
           <div className='task-name'>Placeholder name</div>
-          <label htmlFor={selectId}>Status</label>
+          <Label htmlFor={selectId}>Status</Label>
           <Select id={selectId} style={{
 
           }}>
