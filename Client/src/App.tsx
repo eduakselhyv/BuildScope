@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import './assets/styles/index.css';
 import { NavBar } from './components';
 import TasksPage from './pages/TasksPage';
@@ -6,7 +6,7 @@ import UploadPage from './pages/UploadPage';
 import UsersPage from './pages/UsersPage';
 
 function App() {
-    const [content, setContent] = useState<JSX.Element | null>(null);
+    const [content, setContent] = useState<React.JSX.Element | null>(null);
 
     // Function for switching active view
     function handleViewChange(newView: string){
