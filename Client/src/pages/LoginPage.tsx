@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Field, Input } from '@fluentui/react-components';
 import { makeStyles } from '@griffel/react';
+import axios from 'axios';
 
 const useStyles = makeStyles({
     loginHolder: {
@@ -44,21 +45,46 @@ function LoginPage() {
   const navigate = useNavigate();
   const styles = useStyles();
 
-  // Change this logic once server is implemented
+  // Log in
   function logIn() {
-    localStorage.setItem('user', username);
-    navigate('/');
+    // Create body
+    const body = {
+      username: username,
+      password: password
+    };
+  
+    // Send login request to server
+    axios.post('http://localhost:8000/users/login', body, {headers: {'Content-Type': 'application/json'}})
+      .then(response => {
+        if (response.status == 200) { // If status code 200
+          localStorage.setItem('user', username); // Save username to localstorage
+          setTimeout(() => { // Wait for a while before redirecting
+            navigate('/');
+          }, 100);
+        }
+      }).catch(e => { // If status code is not 200
+        alert("Incorrect username or password!");
+      });
   }
 
+  // Register
   function register() {
-    
-    // Logic to register user
+    // Create body
+    const body = {
+      username: username,
+      password: password
+    };
 
-    /*
-    if (response.IsSuccessStatusCode) {
-      logIn();
-    }
-    */
+    // Send register request
+    axios.post('http://localhost:8000/users/register', body, {headers: {'Content-Type': 'application/json'}})
+    .then(response => {
+      if (response.status == 200) { // If status code 200
+        alert("Successfully created account!");
+      }
+    })
+    .catch(error => { // If status code is not 200
+      alert("User already exists!");
+    });
   }
 
   return (
