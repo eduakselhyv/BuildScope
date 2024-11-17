@@ -16,12 +16,14 @@ function Index() {
   // Check if user has JWT credentials stored in cookies, if not, redirect to login
   useEffect(() => {
     const checkAuth = async () => {
-      const response = await fetch('../../backend/index.php', { credentials: 'include', method: 'GET' });
+      /*
+      const response = await fetch('http://localhost:8000/users/auth', { credentials: 'include', method: 'GET' });
       if (response.ok) {
         setIsAuthenticated(true);
       } else {
         setIsAuthenticated(false);
       }
+      */
     };
 
     // Remove this if else statement once server is set up to check for user authentication
