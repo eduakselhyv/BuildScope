@@ -47,14 +47,16 @@ function LoginPage() {
 
   // Log in
   function logIn() {
+    const body = {
+      username: username,
+      password: password
+    }
     // Send login request
-    axios.post('http://localhost:8000/users/login', {username: username, password: password}, {headers: {'Content-Type': 'application/json'}})
+    axios.post('http://localhost:8000/users/login', body, {headers: {'Content-Type': 'application/json'}})
       .then(response => {
         if (response.status === 200) { // If status code 200
           localStorage.setItem('user', username); // Save username to localstorage
-          setTimeout(() => { // Wait for a while before redirecting
-            navigate('/');
-          }, 150);
+          navigate('/');
         }
       }).catch(e => { // If status code is not 200
         alert("Incorrect username or password!");
