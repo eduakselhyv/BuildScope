@@ -4,7 +4,7 @@ header("Access-Control-Allow-Origin: *"); // Allow all domains
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE"); // Allow specific HTTP methods
 header("Access-Control-Allow-Headers: Content-Type, Authorization"); // Allow these headers
 
-header('Content-Type: application/json');
+header('Content-Type: application/x-www-form-urlencoded');
 $jwtSecret = "defojear0uer980rhj320rhnf0eiwhtn4308it43j";
 
 // Include functions
@@ -22,17 +22,16 @@ try {
 // Get data from request
 $method = $_SERVER['REQUEST_METHOD'];
 $request = explode('/', trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/'));
-$data = json_decode(file_get_contents('php://input'), true);
-error_log('Request Body: ' . file_get_contents('php://input'));
+error_log('Request Body: ' . $_POST);
 
 switch ($request[0]) {
     case 'users':
         switch ($request[1]) {
             case 'login':
-                echo login($data['username'], $data['password'], $db, $jwtSecret);
+                echo login($_POST['username'], $_POST['password'], $db, $jwtSecret);
                 break;
             case 'register':
-                echo register($data['username'], $data['password'], $db);
+                echo register($_POST['username'], $_POST['password'], $db);
                 break;
             case 'auth':
                 echo $data;

@@ -44,6 +44,7 @@ function register($username, $password, $db) {
     } else {
         $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
         $db->users->insertOne(['username' => $username, 'password' => $hashedPassword]);
+        http_response_code(201); 
         return true;
     }
 }
