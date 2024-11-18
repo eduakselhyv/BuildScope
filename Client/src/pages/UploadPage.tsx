@@ -1,10 +1,11 @@
 import React from 'react';
 import '../assets/styles/uploadpage.css';
+import { Label } from "@fluentui/react-components";
 
 function UploadPage() {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault(); 
-    
+    event.preventDefault();
+
     // Function for sending task to server
 
     alert(`Successfully uploaded task!`);
@@ -13,13 +14,13 @@ function UploadPage() {
   return (
     <div className='uploadholder'>
       <form onSubmit={handleSubmit}>
-        <label htmlFor='media-name'>Media's name</label>
+        <Label htmlFor='media-name'>Media's name</Label>
         <input id='media-name' type='text' required/>
 
-        <label htmlFor='media-description'>Description</label>
+        <Label htmlFor='media-description'>Description</Label>
         <textarea id='media-description' required></textarea>
 
-        <label htmlFor='media'>Media</label>
+        <Label htmlFor='media'>Media</Label>
         <input type='file' accept="image/png, image/jpeg" required/>
 
         <input type='submit' value="Upload"/>
