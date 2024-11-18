@@ -46,10 +46,9 @@ function LoginPage() {
   const [pageState, setPageState] = useState("");
   const navigate = useNavigate();
   const styles = useStyles();
-  const styles = useStyles();
 
   // Log in
-  // Log in
+
   function logIn() {
     // Create body
     const body = {
