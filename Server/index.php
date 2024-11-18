@@ -4,8 +4,9 @@ header("Access-Control-Allow-Origin: http://localhost:3000");
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE"); 
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
 header("Access-Control-Allow-Credentials: true");
-
 header('Content-Type: application/x-www-form-urlencoded');
+
+// JWT Secret
 $jwtSecret = "defojear0uer980rhj320rhnf0eiwhtn4308it43j";
 
 // Include functions
@@ -23,7 +24,6 @@ try {
 // Get data from request
 $method = $_SERVER['REQUEST_METHOD'];
 $request = explode('/', trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/'));
-echo "Jwt:" . $_COOKIE['jwt'];
 
 switch ($request[0]) {
     case 'users':

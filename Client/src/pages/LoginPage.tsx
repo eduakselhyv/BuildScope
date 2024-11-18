@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Field, Input } from '@fluentui/react-components';
 import { makeStyles } from '@griffel/react';
-import axios, { HttpStatusCode } from 'axios';
+import axios from 'axios';
 
 const useStyles = makeStyles({
     loginHolder: {
@@ -42,7 +42,6 @@ const useStyles = makeStyles({
 function LoginPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const navigate = useNavigate();
   const styles = useStyles();
 
   // Log in

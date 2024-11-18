@@ -41,9 +41,9 @@ function register($username, $password, $db) {
     // Find if user exists with name
     $exists = $db->users->findOne(['username' => $username]);
 
-    if ($exists) {
+    if ($exists) { // If exists, return 401
         http_response_code(401);
-    } else {
+    } else { // If doesn't, create user
         $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
         $db->users->insertOne(['username' => $username, 'password' => $hashedPassword]);
         http_response_code(201); 
@@ -52,20 +52,18 @@ function register($username, $password, $db) {
 }
 
 function auth($jwt, $jwtSecret) {
-    if (!isset($jwt)) {
+    if (!isset($jwt)) { // Check if jwt is given
         http_response_code(401);
         echo json_encode(['error' => 'No JWT token found in cookie']);
         return;
     }
 
-    $jwt = $_COOKIE['jwt'];
-
     try {
-        $decoded = JWT::decode($jwt, $jwtSecret, ['HS256']);
+        $decoded = JWT::decode($jwt, $jwtSecret, ['HS256']); // Attempt to decode JWT
 
         echo json_encode(['message' => 'Authenticated', 'user' => $decoded]);
-    } catch (Exception $e) {
-        http_response_code(401); //
+    } catch (Exception $e) { // If fails, throw 401
+        http_response_code(401);
         echo json_encode(['error' => 'Invalid or expired token', 'message' => $e->getMessage()]);
     }
 }
