@@ -47,20 +47,14 @@ function LoginPage() {
 
   // Log in
   function logIn() {
-    // Create body
-    const body = {
-      username: username,
-      password: password
-    };
-  
-    // Send login request to server
-    axios.post('http://localhost:8000/users/login', body, {headers: {'Content-Type': 'application/json'}})
+    // Send login request
+    axios.post('http://localhost:8000/users/login', {username: username, password: password}, {headers: {'Content-Type': 'application/json'}})
       .then(response => {
-        if (response.status == 200) { // If status code 200
+        if (response.status === 200) { // If status code 200
           localStorage.setItem('user', username); // Save username to localstorage
           setTimeout(() => { // Wait for a while before redirecting
             navigate('/');
-          }, 100);
+          }, 150);
         }
       }).catch(e => { // If status code is not 200
         alert("Incorrect username or password!");
@@ -69,16 +63,10 @@ function LoginPage() {
 
   // Register
   function register() {
-    // Create body
-    const body = {
-      username: username,
-      password: password
-    };
-
     // Send register request
-    axios.post('http://localhost:8000/users/register', body, {headers: {'Content-Type': 'application/json'}})
+    axios.post('http://localhost:8000/users/register', {username: username, password: password}, {headers: {'Content-Type': 'application/json'}})
     .then(response => {
-      if (response.status == 200) { // If status code 200
+      if (response.status === 200) { // If status code 200
         alert("Successfully created account!");
       }
     })
