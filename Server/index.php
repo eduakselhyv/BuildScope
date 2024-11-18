@@ -1,8 +1,9 @@
 <?php
-// Allow all origins to access the server
-header("Access-Control-Allow-Origin: *"); // Allow all domains
-header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE"); // Allow specific HTTP methods
-header("Access-Control-Allow-Headers: Content-Type, Authorization"); // Allow these headers
+// CORS
+header("Access-Control-Allow-Origin: http://localhost:3000");
+header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE"); 
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
+header("Access-Control-Allow-Credentials: true");
 
 header('Content-Type: application/x-www-form-urlencoded');
 $jwtSecret = "defojear0uer980rhj320rhnf0eiwhtn4308it43j";
@@ -22,7 +23,7 @@ try {
 // Get data from request
 $method = $_SERVER['REQUEST_METHOD'];
 $request = explode('/', trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/'));
-error_log('Request Body: ' . $_POST);
+echo "Jwt:" . $_COOKIE['jwt'];
 
 switch ($request[0]) {
     case 'users':
@@ -34,7 +35,7 @@ switch ($request[0]) {
                 echo register($_POST['username'], $_POST['password'], $db);
                 break;
             case 'auth':
-                echo $data;
+                echo auth($_COOKIE['jwt'], $jwtSecret);
                 break;
         }
         break;

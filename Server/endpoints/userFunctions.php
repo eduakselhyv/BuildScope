@@ -17,15 +17,17 @@ function login($username, $password, $db, $jwtSecret) {
         // Encode the JWT
         $jwt = JWT::encode($payload, $jwtSecret, 'HS256'); 
 
-        // Cookie parameters
-        $cookieName = "JWT"; 
-        $cookieValue = $jwt;
-        $cookieExpiration = time() + (60 * 60);
-        $cookiePath = "/";
-        $cookieHttpOnly = true;
-
         // Set the cookie
-        setcookie($cookieName, $cookieValue, $cookieExpiration, $cookiePath, '', $cookieHttpOnly);
+        setcookie(
+            'jwt',          // Name
+            $jwt,           // Value
+            time() + 3600,  // Cookie expiration
+            "/",            // Path
+            "localhost",    // Domain
+            false,          // Set to true for HTTPS
+            true,           // HttpOnly flag (cannot be accessed by JavaScript)
+            ['samesite' => 'None'] // Set SameSite to None for cross-origin requests
+        );
 
         http_response_code(200); 
 
@@ -46,5 +48,24 @@ function register($username, $password, $db) {
         $db->users->insertOne(['username' => $username, 'password' => $hashedPassword]);
         http_response_code(201); 
         return true;
+    }
+}
+
+function auth($jwt, $jwtSecret) {
+    if (!isset($jwt)) {
+        http_response_code(401);
+        echo json_encode(['error' => 'No JWT token found in cookie']);
+        return;
+    }
+
+    $jwt = $_COOKIE['jwt'];
+
+    try {
+        $decoded = JWT::decode($jwt, $jwtSecret, ['HS256']);
+
+        echo json_encode(['message' => 'Authenticated', 'user' => $decoded]);
+    } catch (Exception $e) {
+        http_response_code(401); //
+        echo json_encode(['error' => 'Invalid or expired token', 'message' => $e->getMessage()]);
     }
 }

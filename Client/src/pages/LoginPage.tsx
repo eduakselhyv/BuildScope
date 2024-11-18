@@ -47,7 +47,6 @@ function LoginPage() {
 
   // Log in
   async function logIn() {
-    console.log(username, password)
     const body = new URLSearchParams();
     body.append('username', username);
     body.append('password', password);
@@ -73,7 +72,6 @@ function LoginPage() {
 
   // Register
   async function register() {
-    console.log(username, password)
     const body = new URLSearchParams();
     body.append('username', username);
     body.append('password', password);
