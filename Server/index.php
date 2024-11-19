@@ -1,11 +1,10 @@
 <?php
-// Allow all origins to access the server
-header("Access-Control-Allow-Origin: *"); // Allow all domains
-header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE"); // Allow specific HTTP methods
-header("Access-Control-Allow-Headers: Content-Type, Authorization"); // Allow these headers
-
-header('Content-Type: application/json');
-$jwtSecret = "defojear0uer980rhj320rhnf0eiwhtn4308it43j";
+// CORS
+header("Access-Control-Allow-Origin: http://localhost:3000");
+header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE"); 
+header("Access-Control-Allow-Headers: Content-Type");
+header("Access-Control-Allow-Credentials: true");
+header('Content-Type: application/x-www-form-urlencoded');
 
 // Include functions
 require 'vendor/autoload.php';
@@ -22,20 +21,18 @@ try {
 // Get data from request
 $method = $_SERVER['REQUEST_METHOD'];
 $request = explode('/', trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/'));
-$data = json_decode(file_get_contents('php://input'), true);
-error_log('Request Body: ' . file_get_contents('php://input'));
 
 switch ($request[0]) {
     case 'users':
         switch ($request[1]) {
             case 'login':
-                echo login($data['username'], $data['password'], $db, $jwtSecret);
+                echo login($_POST['username'], $_POST['password'], $db);
                 break;
             case 'register':
-                echo register($data['username'], $data['password'], $db);
+                echo register($_POST['username'], $_POST['password'], $db);
                 break;
             case 'auth':
-                echo $data;
+                echo auth(); // Updated to call auth without JWT
                 break;
         }
         break;

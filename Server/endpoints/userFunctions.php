@@ -1,34 +1,14 @@
 <?php
-use \Firebase\JWT\JWT;
-
-function login($username, $password, $db, $jwtSecret) {
-    // Find user in database
+function login($username, $password, $db) {
     $user = $db->users->findOne(['username' => $username]);
 
-    // If password is correct and user exists
     if ($user && password_verify($password, $user->password)) {
-        // Create the JWT payload
-        $payload = [
-            'iat' => time(),
-            'exp' => time() + (60 * 60), 
-            'sub' => (string)$user->_id,
-        ];
-
-        // Encode the JWT
-        $jwt = JWT::encode($payload, $jwtSecret, 'HS256'); 
-
-        // Cookie parameters
-        $cookieName = "JWT"; 
-        $cookieValue = $jwt;
-        $cookieExpiration = time() + (60 * 60);
-        $cookiePath = "/";
-        $cookieHttpOnly = true;
-
-        // Set the cookie
-        setcookie($cookieName, $cookieValue, $cookieExpiration, $cookiePath, '', $cookieHttpOnly);
+        session_start();
+        $_SESSION['user_id'] = (string)$user->_id;
+        $_SESSION['username'] = $username;
 
         http_response_code(200); 
-
+        return json_encode(['message' => 'Login successful']);
     } else {
         http_response_code(401);
         return json_encode(['error' => 'Invalid username or password']);
@@ -36,14 +16,27 @@ function login($username, $password, $db, $jwtSecret) {
 }
 
 function register($username, $password, $db) {
-    // Find if user exists with name
     $exists = $db->users->findOne(['username' => $username]);
 
     if ($exists) {
         http_response_code(401);
+        return json_encode(['error' => 'User already exists']);
     } else {
         $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
         $db->users->insertOne(['username' => $username, 'password' => $hashedPassword]);
-        return true;
+        http_response_code(201); 
+        return json_encode(['message' => 'User registered successfully']);
     }
+}
+
+function auth($db) {
+    session_start();
+
+    if (!isset($_SESSION['user_id'])) {
+        http_response_code(401);
+        echo json_encode(['error' => 'User not authenticated']);
+        return;
+    }
+
+    echo json_encode(['message' => 'Authenticated', 'user_id' => $_SESSION['user_id'], 'username' => $_SESSION['username']]);
 }
