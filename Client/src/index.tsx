@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import LoginPage from './pages/LoginPage';
 import NotFound from './pages/NotFound';
+import axios from 'axios';
 
 import App from './App';
 
@@ -13,13 +14,11 @@ const root = ReactDOM.createRoot(
 function Index() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
 
-  // Check if user has JWT credentials stored in cookies, if not, redirect to login
   useEffect(() => {
     const checkAuth = async () => {
-      try {
-        await fetch('http://localhost:8000/users/auth', { credentials: 'include', method: 'GET' });
+      if (localStorage.getItem('user')) {
         setIsAuthenticated(true);
-      } catch {
+      } else {
         setIsAuthenticated(false);
       }
     };

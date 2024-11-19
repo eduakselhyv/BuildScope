@@ -6,20 +6,13 @@ header("Access-Control-Allow-Headers: Content-Type, Authorization");
 header("Access-Control-Allow-Credentials: true");
 header('Content-Type: application/x-www-form-urlencoded');
 
-// JWT Secret
-$jwtSecret = "defojear0uer980rhj320rhnf0eiwhtn4308it43j";
-
 // Include functions
 require 'vendor/autoload.php';
 require 'endpoints/userFunctions.php';
 
 // Connect to MongoDB
-try {
-    $client = new MongoDB\Client("mongodb+srv://akselihyvonen:7dvc2uBvP9YL0jae@mediareview.sorsm.mongodb.net/?retryWrites=true&w=majority&appName=MediaReview");
-    $db = $client->selectDataBase('mediareview');
-} catch (Exception $e) {
-    echo $e;
-}
+$client = new MongoDB\Client("mongodb+srv://akselihyvonen:7dvc2uBvP9YL0jae@mediareview.sorsm.mongodb.net/?retryWrites=true&w=majority&appName=MediaReview");
+$db = $client->selectDataBase('mediareview');
 
 // Get data from request
 $method = $_SERVER['REQUEST_METHOD'];
@@ -33,9 +26,6 @@ switch ($request[0]) {
                 break;
             case 'register':
                 echo register($_POST['username'], $_POST['password'], $db);
-                break;
-            case 'auth':
-                echo auth($_COOKIE['jwt'], $jwtSecret);
                 break;
         }
         break;

@@ -52,9 +52,16 @@ function LoginPage() {
 
     // Send login request
     try {
-      await axios.post('http://localhost:8000/users/login', body, {headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
-      localStorage.setItem('user', username);
-      window.location.href = '/';
+      const response = await axios.post('http://localhost:8000/users/login', body, {headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
+      
+      if (response.status === 200) {
+        localStorage.setItem('user', username);
+        window.location.href = '/';
+      } else if (response.status === 401) {
+        alert("Incorrect password or username!");
+      } else {
+        alert("An unexpected error has occurred");
+      }
 
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -77,8 +84,15 @@ function LoginPage() {
 
     // Send register request
     try {
-      await axios.post('http://localhost:8000/users/register', body, {headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
-      alert("Successfully created account!");
+      const response = await axios.post('http://localhost:8000/users/register', body, {headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
+      
+      if (response.status === 200) {
+        alert("Successfully created account!");
+      } else if (response.status === 401) {
+        alert("User already exists!");
+      } else {
+        alert("An unexpected error has occurred");
+      }
 
     } catch (error) {
       if (axios.isAxiosError(error)) {
