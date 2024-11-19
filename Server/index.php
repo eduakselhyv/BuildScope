@@ -31,9 +31,6 @@ switch ($request[0]) {
             case 'register':
                 echo register($_POST['username'], $_POST['password'], $db);
                 break;
-            case 'auth':
-                echo auth(); // Updated to call auth without JWT
-                break;
         }
         break;
 

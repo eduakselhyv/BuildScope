@@ -28,15 +28,3 @@ function register($username, $password, $db) {
         return json_encode(['message' => 'User registered successfully']);
     }
 }
-
-function auth($db) {
-    session_start();
-
-    if (!isset($_SESSION['user_id'])) {
-        http_response_code(401);
-        echo json_encode(['error' => 'User not authenticated']);
-        return;
-    }
-
-    echo json_encode(['message' => 'Authenticated', 'user_id' => $_SESSION['user_id'], 'username' => $_SESSION['username']]);
-}
