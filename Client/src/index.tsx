@@ -26,7 +26,6 @@ function Index() {
     checkAuth();
   }, []);
 
-  // Wait until user authentication check is done
   if (isAuthenticated === null) {
     return <></>;
   }

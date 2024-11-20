@@ -2,7 +2,7 @@
 // CORS
 header("Access-Control-Allow-Origin: http://localhost:3000");
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE"); 
-header("Access-Control-Allow-Headers: Content-Type, Authorization");
+header("Access-Control-Allow-Headers: Content-Type");
 header("Access-Control-Allow-Credentials: true");
 header('Content-Type: application/x-www-form-urlencoded');
 
@@ -23,7 +23,7 @@ switch ($request[0]) {
     case 'users':
         switch ($request[1]) {
             case 'login':
-                echo login($_POST['username'], $_POST['password'], $db, $jwtSecret);
+                echo login($_POST['username'], $_POST['password'], $db);
                 break;
             case 'register':
                 echo register($_POST['username'], $_POST['password'], $db);
