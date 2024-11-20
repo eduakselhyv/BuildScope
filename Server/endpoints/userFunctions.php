@@ -1,5 +1,4 @@
 <?php
-use \Firebase\JWT\JWT;
 
 function login($username, $password, $db, $jwtSecret) {
     // Find user in database
