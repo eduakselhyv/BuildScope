@@ -42,49 +42,69 @@ const useStyles = makeStyles({
 function LoginPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const navigate = useNavigate();
   const styles = useStyles();
 
   // Log in
-  function logIn() {
-    // Create body
-    const body = {
-      username: username,
-      password: password
-    };
-  
-    // Send login request to server
-    axios.post('http://localhost:8000/users/login', body, {headers: {'Content-Type': 'application/json'}})
-      .then(response => {
-        if (response.status == 200) { // If status code 200
-          localStorage.setItem('user', username); // Save username to localstorage
-          setTimeout(() => { // Wait for a while before redirecting
-            navigate('/');
-          }, 100);
+  async function logIn() {
+    const body = new URLSearchParams();
+    body.append('username', username);
+    body.append('password', password);
+
+    // Send login request
+    try {
+      const response = await axios.post('http://localhost:8000/users/login', body, {headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
+      
+      if (response.status === 200) {
+        localStorage.setItem('user', username);
+        window.location.href = '/';
+      } else if (response.status === 401) {
+        alert("Incorrect password or username!");
+      } else {
+        alert("An unexpected error has occurred");
+      }
+
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        if (error.response && error.response.status === 401) {
+          alert("Incorrect password or username!");
+        } else {
+          alert("An unexpected error has occurred");
         }
-      }).catch(e => { // If status code is not 200
-        alert("Incorrect username or password!");
-      });
+      } else {
+        alert("An unexpected error has occurred");
+      }
+    }
   }
 
   // Register
-  function register() {
-    // Create body
-    const body = {
-      username: username,
-      password: password
-    };
+  async function register() {
+    const body = new URLSearchParams();
+    body.append('username', username);
+    body.append('password', password);
 
     // Send register request
-    axios.post('http://localhost:8000/users/register', body, {headers: {'Content-Type': 'application/json'}})
-    .then(response => {
-      if (response.status == 200) { // If status code 200
+    try {
+      const response = await axios.post('http://localhost:8000/users/register', body, {headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
+      
+      if (response.status === 200) {
         alert("Successfully created account!");
+      } else if (response.status === 401) {
+        alert("User already exists!");
+      } else {
+        alert("An unexpected error has occurred");
       }
-    })
-    .catch(error => { // If status code is not 200
-      alert("User already exists!");
-    });
+
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        if (error.response && error.response.status === 401) {
+          alert("User already exists!");
+        } else {
+          alert("An unexpected error has occurred");
+        }
+      } else {
+        alert("An unexpected error has occurred");
+      }
+    }
   }
 
   return (

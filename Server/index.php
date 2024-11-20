@@ -9,14 +9,11 @@ header('Content-Type: application/x-www-form-urlencoded');
 // Include functions
 require 'vendor/autoload.php';
 require 'endpoints/userFunctions.php';
+require 'endpoints/taskFunctions.php';
 
 // Connect to MongoDB
-try {
-    $client = new MongoDB\Client("mongodb+srv://akselihyvonen:7dvc2uBvP9YL0jae@mediareview.sorsm.mongodb.net/?retryWrites=true&w=majority&appName=MediaReview");
-    $db = $client->selectDataBase('mediareview');
-} catch (Exception $e) {
-    echo $e;
-}
+$client = new MongoDB\Client("mongodb+srv://akselihyvonen:7dvc2uBvP9YL0jae@mediareview.sorsm.mongodb.net/?retryWrites=true&w=majority&appName=MediaReview");
+$db = $client->selectDataBase('mediareview');
 
 // Get data from request
 $method = $_SERVER['REQUEST_METHOD'];
@@ -35,6 +32,16 @@ switch ($request[0]) {
         break;
 
     case 'tasks':
+        switch ($request[1]) {
+            case 'get-tasks':
+                break;
+            case 'create-task':
+                break;
+            case 'delete-task':
+                break;
+            case 'update-task':
+                break;
+        }
         break;
 
     default:

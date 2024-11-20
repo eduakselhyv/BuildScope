@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import LoginPage from './pages/LoginPage';
 import NotFound from './pages/NotFound';
+import axios from 'axios';
 
 import App from './App';
 
@@ -14,15 +15,19 @@ function Index() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
 
   useEffect(() => {
-    if (localStorage.getItem('user')) {
-      setIsAuthenticated(true);
-    } else {
-      setIsAuthenticated(false);
-    }
+    const checkAuth = async () => {
+      if (localStorage.getItem('user')) {
+        setIsAuthenticated(true);
+      } else {
+        setIsAuthenticated(false);
+      }
+    };
+
+    checkAuth();
   }, []);
 
   if (isAuthenticated === null) {
-    return <div>Loading...</div>;
+    return <></>;
   }
 
   return (

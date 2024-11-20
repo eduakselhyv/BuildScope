@@ -1,5 +1,7 @@
 <?php
-function login($username, $password, $db) {
+
+function login($username, $password, $db, $jwtSecret) {
+    // Find user in database
     $user = $db->users->findOne(['username' => $username]);
 
     if ($user && password_verify($password, $user->password)) {
@@ -18,7 +20,7 @@ function login($username, $password, $db) {
 function register($username, $password, $db) {
     $exists = $db->users->findOne(['username' => $username]);
 
-    if ($exists) {
+    if ($exists) { // If exists, return 401
         http_response_code(401);
         return json_encode(['error' => 'User already exists']);
     } else {
