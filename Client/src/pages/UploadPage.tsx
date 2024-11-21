@@ -15,16 +15,14 @@ function UploadPage() {
     body.append('name', name);
     body.append('desc', desc);
     body.append('img', img);
+    body.append('installer', localStorage.getItem('user') as string);
 
-    const response = await axios.post('http://localhost:8000/tasks/create-task', body, {headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
-      
-      if (response.status === 201) {
-        alert("Successfully created task!");
-      } else if (response.status === 401) {
-        alert("Invalid params given!");
-      } else {
-        alert("An unexpected error has occurred");
-      }
+    try {
+      const response = await axios.post('http://localhost:8000/tasks/create-task', body, {headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
+      alert(response.data.message);
+    } catch {
+      alert("An unexpected error has occurred.");
+    }
   };
 
   return (

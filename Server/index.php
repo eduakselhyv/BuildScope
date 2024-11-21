@@ -34,9 +34,10 @@ switch ($request[0]) {
     case 'tasks':
         switch ($request[1]) {
             case 'get-tasks':
+                echo getTasks($_GET['view'], $_GET['user'], $db);
                 break;
             case 'create-task':
-                echo createTask($_POST['name'], $_POST['desc'], $_POST['img'], $db);
+                echo createTask($_POST['name'], $_POST['desc'], $_POST['img'], $_POST['installer'], $db);
                 break;
             case 'delete-task':
                 break;
