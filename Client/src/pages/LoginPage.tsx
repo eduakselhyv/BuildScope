@@ -42,6 +42,7 @@ const useStyles = makeStyles({
 function LoginPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [pageState, setPageState] = useState("");
   const styles = useStyles();
 
   // Log in
@@ -76,6 +77,14 @@ function LoginPage() {
     }
   }
 
+  function changePage() {
+    if (pageState === "") {
+      setPageState("register");
+    } else {
+      setPageState("");
+    }
+  }
+
   // Register
   async function register() {
     const body = new URLSearchParams();
@@ -107,26 +116,47 @@ function LoginPage() {
     }
   }
 
-  return (
-    <div className={styles.loginHolder}>
-      <div className={styles.loginCard}>
-        <div className={styles.title}>Buildscope</div>
+  if (pageState === "") {
+    return (
+      <div className={styles.loginHolder}>
+        <div className={styles.loginCard}>
+          <div className={styles.title}>Buildscope</div>
 
-        <Field>
+          <Field>
             <Input className={styles.inputCustom} type='text' onChange={(e) => setUsername(e.target.value)} placeholder='Username' />
-        </Field>
+          </Field>
 
-        <Field>
+          <Field>
             <Input className={styles.inputCustom} type='password' onChange={(e) => setPassword(e.target.value)} placeholder='Password' />
-        </Field>
-
-        <div className={styles.buttonHolder}>
-          <Button onClick={logIn}>Log in</Button>
-          <Button onClick={register}>Register</Button>
+          </Field>
+          <div className={styles.buttonHolder}>
+            <Button onClick={logIn}>Log in</Button>
+            <Button onClick={changePage}>Register</Button>
+          </div>
         </div>
-      </div>  
-    </div>
-  );
+      </div>
+    );
+  } else {
+    return (
+      <div className={styles.loginHolder}>
+        <div className={styles.loginCard}>
+          <div className={styles.title}>Buildscope</div>
+
+          <Field>
+            <Input className={styles.inputCustom} type='text' onChange={(e) => setUsername(e.target.value)} placeholder='Username' />
+          </Field>
+
+          <Field>
+            <Input className={styles.inputCustom} type='password' onChange={(e) => setPassword(e.target.value)} placeholder='Password' />
+          </Field>
+          <div className={styles.buttonHolder}>
+            <Button onClick={register}>Register</Button>
+            <Button onClick={changePage}>Back</Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 }
 
 export default LoginPage;
