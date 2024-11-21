@@ -28,6 +28,8 @@ switch ($request[0]) {
             case 'register':
                 echo register($_POST['username'], $_POST['password'], $db);
                 break;
+            case 'users':
+                echo register($db);
         }
         break;
 

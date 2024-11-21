@@ -26,7 +26,7 @@ export function NavBar({ changeView }: InputProps) {
       <nav>
         <div className='sidebar-option' onClick={() => handleClick('tasks')}>Tasks</div>
         <div className='sidebar-option' onClick={() => handleClick('upload')}>Upload</div>
-        <div className='sidebar-option disabled'>Users</div>
+        <div className='sidebar-option' onClick={() => handleClick('users')}>Users</div>
       </nav>
       <div className='usercontent'>
         <div className='user'>
