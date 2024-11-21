@@ -1,6 +1,6 @@
 <?php
 
-function login($username, $password, $db, $jwtSecret) {
+function login($username, $password, $db) {
     // Find user in database
     $user = $db->users->findOne(['username' => $username]);
 

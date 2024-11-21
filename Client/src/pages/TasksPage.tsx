@@ -20,7 +20,7 @@ interface Task {
 
 function TasksPage() {
   const [tasks, setTasks] = useState<Task[]>([]); // Variable for storing tasks
-  const [currentView, setCurrentView] = useState(''); // Variable for storing tasks
+  const [currentView, setCurrentView] = useState('');
 
   function displayTasks(view: string) {
     setCurrentView(view);

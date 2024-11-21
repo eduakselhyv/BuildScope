@@ -35,7 +35,6 @@ input[type="file"] {
     color: black;
     height: auto;
     border-radius: 0;
-    margin-bottom: 60px;
 }
 
 input[type="submit"] {
@@ -46,4 +45,5 @@ input[type="submit"] {
     font-size: 25px;
     font-weight: 200;
     cursor: pointer;
+    margin-top: 20px;
 }
