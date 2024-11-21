@@ -94,14 +94,7 @@ function LoginPage() {
     // Send register request
     try {
       const response = await axios.post('http://localhost:8000/users/register', body, {headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
-      
-      if (response.status === 200) {
-        alert("Successfully created account!");
-      } else if (response.status === 401) {
-        alert("User already exists!");
-      } else {
-        alert("An unexpected error has occurred");
-      }
+      alert(response.data.message);
 
     } catch (error) {
       if (axios.isAxiosError(error)) {
