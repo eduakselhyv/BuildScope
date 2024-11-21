@@ -6,75 +6,75 @@ import axios from "axios";
 
 const useStyles = makeStyles({
   loginHolder: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    height: "100vh",
-    backgroundColor: "lightgray",
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '100vh',
+    backgroundColor: 'lightgray',
   },
   loginCard: {
-    backgroundColor: "white",
-    borderRadius: "10px",
-    boxShadow:
-      "-5px 5px 10px rgba(0, 0, 0, 0.2), 5px 5px 10px rgba(0, 0, 0, 0.2)",
-    padding: "110px 20px 80px",
-    width: "300px",
-    display: "flex",
-    flexWrap: "wrap",
-    justifyContent: "center",
-    alignItems: "center",
+    backgroundColor: 'white',
+    borderRadius: '10px',
+    boxShadow: '-5px 5px 10px rgba(0, 0, 0, 0.2), 5px 5px 10px rgba(0, 0, 0, 0.2)',
+    padding: '110px 20px 80px',
+    width: '300px',
+    display: 'flex',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   title: {
-    textAlign: "center",
-    fontSize: "30px",
-    paddingBottom: "20px",
+    textAlign: 'center',
+    fontSize: '30px',
+    paddingBottom: '20px',
   },
   inputCustom: {
-    "& .fui-Input__input": {
-      background: "rgb(0, 0, 0, 0.1)",
-      paddingLeft: "10px",
-    },
+    '& .fui-Input__input': {
+      background: 'rgb(0, 0, 0, 0.1)',
+      paddingLeft: '10px'
+    }
   },
   buttonHolder: {
-    marginTop: "40px",
-  },
+    marginTop: '40px'
+  }
 });
 
 function LoginPage() {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const [pageState, setPageState] = useState("");
-  const navigate = useNavigate();
   const styles = useStyles();
 
   // Log in
+  async function logIn() {
+    const body = new URLSearchParams();
+    body.append('username', username);
+    body.append('password', password);
 
-  function logIn() {
-    // Create body
-    const body = {
-      username: username,
-      password: password,
-    };
+    // Send login request
+    try {
+      const response = await axios.post('http://localhost:8000/users/login', body, {headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
+      
+      if (response.status === 200) {
+        localStorage.setItem('user', username);
+        window.location.href = '/';
+      } else if (response.status === 401) {
+        alert("Incorrect password or username!");
+      } else {
+        alert("An unexpected error has occurred");
+      }
 
-    // Send login request to server
-    axios
-      .post("http://localhost:8000/users/login", body, {
-        headers: { "Content-Type": "application/json" },
-      })
-      .then((response) => {
-        if (response.status == 200) {
-          // If status code 200
-          localStorage.setItem("user", username); // Save username to localstorage
-          setTimeout(() => {
-            // Wait for a while before redirecting
-            navigate("/");
-          }, 100);
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        if (error.response && error.response.status === 401) {
+          alert("Incorrect password or username!");
+        } else {
+          alert("An unexpected error has occurred");
         }
-      })
-      .catch((e) => {
-        // If status code is not 200
-        alert("Incorrect username or password!");
-      });
+      } else {
+        alert("An unexpected error has occurred");
+      }
+    }
   }
 
   function changePage() {
@@ -85,29 +85,35 @@ function LoginPage() {
     }
   }
 
-  function register() {
-    // Create body
-    const body = {
-      username: username,
-      password: password,
-    };
+  // Register
+  async function register() {
+    const body = new URLSearchParams();
+    body.append('username', username);
+    body.append('password', password);
 
     // Send register request
-    axios
-      .post("http://localhost:8000/users/register", body, {
-        headers: { "Content-Type": "application/json" },
-      })
-      .then((response) => {
-        if (response.status == 200) {
-          // If status code 200
-          alert("Successfully created account!");
-        }
-      })
-      .catch((error) => {
-        // If status code is not 200
+    try {
+      const response = await axios.post('http://localhost:8000/users/register', body, {headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
+      
+      if (response.status === 200) {
+        alert("Successfully created account!");
+      } else if (response.status === 401) {
         alert("User already exists!");
-      });
-    setPageState("");
+      } else {
+        alert("An unexpected error has occurred");
+      }
+
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        if (error.response && error.response.status === 401) {
+          alert("User already exists!");
+        } else {
+          alert("An unexpected error has occurred");
+        }
+      } else {
+        alert("An unexpected error has occurred");
+      }
+    }
   }
 
   if (pageState === "") {
@@ -117,21 +123,11 @@ function LoginPage() {
           <div className={styles.title}>Buildscope</div>
 
           <Field>
-            <Input
-              className={styles.inputCustom}
-              type="text"
-              onChange={(e) => setUsername(e.target.value)}
-              placeholder="Username"
-            />
+            <Input className={styles.inputCustom} type='text' onChange={(e) => setUsername(e.target.value)} placeholder='Username' />
           </Field>
 
           <Field>
-            <Input
-              className={styles.inputCustom}
-              type="password"
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Password"
-            />
+            <Input className={styles.inputCustom} type='password' onChange={(e) => setPassword(e.target.value)} placeholder='Password' />
           </Field>
           <div className={styles.buttonHolder}>
             <Button onClick={logIn}>Log in</Button>
@@ -147,21 +143,11 @@ function LoginPage() {
           <div className={styles.title}>Buildscope</div>
 
           <Field>
-            <Input
-              className={styles.inputCustom}
-              type="text"
-              onChange={(e) => setUsername(e.target.value)}
-              placeholder="Username"
-            />
+            <Input className={styles.inputCustom} type='text' onChange={(e) => setUsername(e.target.value)} placeholder='Username' />
           </Field>
 
           <Field>
-            <Input
-              className={styles.inputCustom}
-              type="password"
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Password"
-            />
+            <Input className={styles.inputCustom} type='password' onChange={(e) => setPassword(e.target.value)} placeholder='Password' />
           </Field>
           <div className={styles.buttonHolder}>
             <Button onClick={register}>Register</Button>
