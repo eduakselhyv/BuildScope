@@ -1,6 +1,60 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import "../assets/styles/taskspage.css";
-import { Select, useId, Label, Dropdown, Option } from "@fluentui/react-components";
+import {
+  Select,
+  useId,
+  Label,
+  Dropdown,
+  Option,
+  Field,
+  Input,
+  Button
+} from "@fluentui/react-components";
+import { makeStyles } from '@griffel/react';
+
+const useStyles = makeStyles({
+  title: {
+    textAlign: 'left',
+    fontSize: '20px',
+    paddingBottom: '20px',
+  },
+  taskComments: {
+    display: 'flex',
+    justifyContent: 'left',
+    alignItems: 'left',
+    backgroundColor: 'lightgray',
+  },
+  commentHolder: {
+    backgroundColor: 'white',
+    borderRadius: '10px',
+    boxShadow: '-5px 5px 10px rgba(0, 0, 0, 0.2), 5px 5px 10px rgba(0, 0, 0, 0.2)',
+    display: 'flex',
+    flexWrap: 'wrap',
+    justifyContent: 'left',
+    alignItems: 'left'
+  },
+  commentUser: {
+
+  },
+  comment: {
+
+  },
+  commentDate: {
+
+  },
+  input: {
+    '& .fui-Input__input': {
+      background: 'rgb(0, 0, 0, 0.1)',
+      paddingLeft: '10px'
+    }
+  },
+  newComment: {
+
+  },
+  button: {
+    
+  }
+});
 
 // Interface for comment
 interface Comment {
@@ -20,17 +74,38 @@ interface Task {
 
 function TasksPage() {
   const [tasks, setTasks] = useState<Task[]>([]); // Variable for storing tasks
-  const [currentView, setCurrentView] = useState(''); // Variable for storing tasks
+  const [currentView, setCurrentView] = useState(""); // Variable for storing tasks
+  const [newComment, setNewComment] = useState<{ [key: string]: string }>({}); // Variable for storing new comments
+  const styles = useStyles();
 
   function displayTasks(view: string) {
     setCurrentView(view);
 
     // Function for getting tasks. Change when server implemented
-    const fetchedTasks = 
-    [ {id: "0", name: "Bolted panels", installer: "John Doe", media: "https://i.ytimg.com/vi/rvX8cS-v2XM/hq720.jpg", status: "Waiting",
-        comments: []},
-      {id: "1", name: "Metal plating", installer: "Jane Doe", media: "https://i.ytimg.com/vi/rvX8cS-v2XM/hq720.jpg", status: "Approved", 
-        comments: [{user: "user1", comment: "This is a comment", date: "14.10.2024"}, {user: "user2", comment: "This is another comment", date: "15.10.2024"}]},
+    const fetchedTasks = [
+      {
+        id: "0",
+        name: "Bolted panels",
+        installer: "John Doe",
+        media: "https://i.ytimg.com/vi/rvX8cS-v2XM/hq720.jpg",
+        status: "Waiting",
+        comments: [],
+      },
+      {
+        id: "1",
+        name: "Metal plating",
+        installer: "Jane Doe",
+        media: "https://i.ytimg.com/vi/rvX8cS-v2XM/hq720.jpg",
+        status: "Approved",
+        comments: [
+          { user: "user1", comment: "This is a comment", date: "14.10.2024" },
+          {
+            user: "user2",
+            comment: "This is another comment",
+            date: "15.10.2024",
+          },
+        ],
+      },
     ];
 
     setTasks(fetchedTasks);
@@ -40,51 +115,102 @@ function TasksPage() {
     // Send value to server
   }
 
+  function handleCommentChange(taskId: string, value: string) {
+    setNewComment((prev) => ({ ...prev, [taskId]: value }));
+  }
+
+  // a function for submitting new comments
+  function submitComment(taskId: string) {
+    const commentText = newComment[taskId];
+
+    if (commentText) {
+      const updatedTasks = tasks.map((task) => {
+        if (task.id === taskId) {
+          const newComment: Comment = {
+            user: localStorage.user, // currently just the user in localstorage so might need to change later not sure
+            comment: commentText,
+            date: new Date().toLocaleDateString(),
+          };
+          return { ...task, comments: [...task.comments, newComment] };
+        }
+        return task;
+      });
+
+      setTasks(updatedTasks);
+      setNewComment((prev) => ({ ...prev, [taskId]: "" }));
+    }
+  }
+
   // Initialize page
   useEffect(() => {
-    displayTasks('your-tasks');
+    displayTasks("your-tasks");
   }, []);
-  
+
   return (
-    <div className='tasksholder'>
-      <nav className='tasknav'>
-        <div className='task-option' onClick={() => displayTasks("your-tasks")}>Your tasks</div>
-        <div className='task-option' onClick={() => displayTasks("unassigned-tasks")}>Unassigned tasks</div>
+    <div className="tasksholder">
+      <nav className="tasknav">
+        <div className="task-option" onClick={() => displayTasks("your-tasks")}>
+          Your tasks
+        </div>
+        <div
+          className="task-option"
+          onClick={() => displayTasks("unassigned-tasks")}
+        >
+          Unassigned tasks
+        </div>
       </nav>
 
-      <div className='task-content'>
-        {
-          tasks.map((task) => (
-            <div className='task-item'>
-              <img className='task-img' src={task.media}/>
+      <div className="task-content">
+        {tasks.map((task) => (
+          <div className="task-item">
+            <img className="task-img" src={task.media} alt={task.name} />
 
-              <div className='task-info'> 
-                <div className='task-name'>{task.name}</div>
-                <div className='installer-name'>Installer: {task.installer}</div>
+            <div className="task-info">
+              <div className="task-name">{task.name}</div>
+              <div className="installer-name">Installer: {task.installer}</div>
 
-                <div className='task-status'>
-                  <Label htmlFor="status-select">Status: </Label>
-                  <Dropdown id="status-select" onChange={(e) => changeStatus((e.target as HTMLSelectElement).value, task.id)} placeholder={task.status}>
-                    <Option value="Waiting">Waiting</Option>
-                    <Option value="Approved">Approved</Option>
-                    <Option value="Denied">Denied</Option>
-                  </Dropdown>
-                </div>
-              </div>
-        
-              <div className='task-comments'>
-                Comments:
-                {task.comments.map((comment) => (
-                  <div className='comment-holder'>
-                    <div className='comment-user'>{comment.user}</div>
-                    <div className='comment'>{comment.comment}</div>
-                    <div className='comment-date'>{comment.date}</div>
-                  </div>
-                ))}
+              <div className="task-status">
+                <Label htmlFor="status-select">Status: </Label>
+                <Dropdown
+                  id="status-select"
+                  onChange={(e) =>
+                    changeStatus((e.target as HTMLSelectElement).value, task.id)
+                  }
+                  placeholder={task.status}
+                >
+                  <Option value="Waiting">Waiting</Option>
+                  <Option value="Approved">Approved</Option>
+                  <Option value="Denied">Denied</Option>
+                </Dropdown>
               </div>
             </div>
-          ))
-        }
+
+            <div className={styles.taskComments}>
+              <div className={styles.title}>Comments:</div>
+              {task.comments.map((comment, index) => (
+                <div className={styles.commentHolder} key={index}>
+                  <div className={styles.commentUser}>{comment.user}</div>
+                  <div className={styles.comment}>{comment.comment}</div>
+                  <div className={styles.commentDate}>{comment.date}</div>
+                </div>
+              ))}
+              <div className={styles.newComment}>
+                <Field>
+                  <Input
+                    className={styles.input}
+                    type="text"
+                    placeholder="Add a comment"
+                    value={newComment[task.id] || ""}
+                    onChange={(e) => handleCommentChange(task.id, e.target.value)}
+                  />
+                </Field>
+                  <div className={styles.button}>
+                    <Button onClick={() => submitComment(task.id)}>Submit</Button>
+                  </div>
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
