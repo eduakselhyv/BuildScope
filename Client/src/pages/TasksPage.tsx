@@ -70,15 +70,15 @@ interface Comment {
 }
 
 interface Task {
-  _id: string; // Task id
-  name: string; // Task name
+  _id: string;
+  name: string;
   desc: string;
   img: string;
-  status: string; // Status of task
+  status: string;
   assigned_to: Array<String>;
   created_at: Date;
   comments: Comment[];
-  installer: string; // Person who did the installation
+  installer: String;
 }
 
 function TasksPage() {
@@ -92,8 +92,6 @@ function TasksPage() {
 
     const response = await axios.get(`http://localhost:8000/tasks/get-tasks?view=${view}&user=${localStorage.getItem('user')}`)
     setTasks(response.data.message);
-    
-    
   }
 
   function changeStatus(value: string, id: string) {

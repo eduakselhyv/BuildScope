@@ -1,6 +1,6 @@
 <?php
 
-function login($username, $password, $db, $jwtSecret) {
+function login($username, $password, $db) {
     // Find user in database
     $user = $db->users->findOne(['username' => $username]);
 
@@ -29,4 +29,16 @@ function register($username, $password, $db) {
         http_response_code(201); 
         return json_encode(['message' => 'User registered successfully']);
     }
+}
+
+function users($db) {
+    $users = $db->users->find([], ['projection' => ['username' => 1]]);
+
+    $userList = [];
+    foreach ($users as $user) {
+        $userList[] = ['id' => (string)$user->_id, 'username' => $user['username']];
+    }
+
+    http_response_code(200); 
+    return json_encode(['users' => $userList]);
 }

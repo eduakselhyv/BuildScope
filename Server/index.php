@@ -28,14 +28,18 @@ switch ($request[0]) {
             case 'register':
                 echo register($_POST['username'], $_POST['password'], $db);
                 break;
+            case 'users':
+                echo users($db);
         }
         break;
 
     case 'tasks':
         switch ($request[1]) {
             case 'get-tasks':
+                echo getTasks($_GET['view'], $_GET['user'], $db);
                 break;
             case 'create-task':
+                echo createTask($_POST['name'], $_POST['desc'], $_POST['img'], $_POST['installer'], $db);
                 break;
             case 'delete-task':
                 break;
