@@ -16,43 +16,46 @@ const useStyles = makeStyles({
   title: {
     textAlign: 'left',
     fontSize: '20px',
-    paddingBottom: '20px',
   },
   taskComments: {
     display: 'flex',
+    flexWrap: 'wrap',
     justifyContent: 'left',
     alignItems: 'left',
     backgroundColor: 'lightgray',
+    padding: '5px',
   },
   commentHolder: {
     backgroundColor: 'white',
     borderRadius: '10px',
-    boxShadow: '-5px 5px 10px rgba(0, 0, 0, 0.2), 5px 5px 10px rgba(0, 0, 0, 0.2)',
-    display: 'flex',
-    flexWrap: 'wrap',
-    justifyContent: 'left',
-    alignItems: 'left'
+    padding: '5px',
+    margin: '3px',
   },
   commentUser: {
-
+    fontWeight: 'bold'
   },
   comment: {
 
   },
   commentDate: {
-
+    fontSize: '13px',
   },
   input: {
     '& .fui-Input__input': {
       background: 'rgb(0, 0, 0, 0.1)',
-      paddingLeft: '10px'
+      padding: '5px',
+      height: '85%',
+      marginTop: '3px'
     }
   },
   newComment: {
-
+    
   },
   button: {
-    
+    borderRadius: '10px',
+    background: 'rgb(0, 0, 0, 0.1)',
+    marginTop: '3px',
+    width: '100px'
   }
 });
 
