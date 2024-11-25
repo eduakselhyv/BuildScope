@@ -7,6 +7,7 @@ function UploadPage() {
   const [name, setName] = useState('');
   const [desc, setDesc] = useState('');
   const [img, setImg] = useState('');
+  const [file, setFile] = useState('');
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -22,6 +23,17 @@ function UploadPage() {
       alert(response.data.message);
     } catch {
       alert("An unexpected error has occurred.");
+    }
+  };
+
+  const onImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files[0]) {
+      console.log(event.target.files);
+      setImg(URL.createObjectURL(event.target.files[0]));
+      setFile(URL.createObjectURL(event.target.files[0]));
+    } else if (event.target.value) {
+      setImg(event.target.value);
+      setFile(event.target.value);
     }
   };
 
@@ -45,7 +57,8 @@ function UploadPage() {
             id="file" 
             name="media" 
             type="file" 
-            accept="image/png, image/jpeg" 
+            accept="image/png, image/jpeg"
+            onChange={onImageChange}
           />
 
           <Label htmlFor="url">or Add URL</Label>
@@ -55,8 +68,9 @@ function UploadPage() {
             type="text" 
             placeholder="Alternatively add URL" 
             pattern="https?://.+" 
-            onChange={(e) => setImg(e.target.value)}
+            onChange={onImageChange}
           />
+          <img src={file} alt="preview image" className='file'/>
         </fieldset>
 
         <input type='submit' value="Upload"/>
