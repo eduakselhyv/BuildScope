@@ -28,7 +28,6 @@ function UploadPage() {
 
   const onImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
-      console.log(event.target.files);
       setImg(URL.createObjectURL(event.target.files[0]));
       setFile(URL.createObjectURL(event.target.files[0]));
     } else if (event.target.value) {
