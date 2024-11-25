@@ -16,6 +16,7 @@ const useStyles = makeStyles({
   title: {
     textAlign: 'left',
     fontSize: '20px',
+    width: '100%'
   },
   taskComments: {
     display: 'flex',
@@ -45,11 +46,12 @@ const useStyles = makeStyles({
       background: 'rgb(0, 0, 0, 0.1)',
       padding: '5px',
       height: '85%',
-      marginTop: '3px'
+      marginTop: '3px',
+      maxWidth: '200px'
     }
   },
   newComment: {
-    
+    width: '100%'
   },
   button: {
     borderRadius: '10px',
