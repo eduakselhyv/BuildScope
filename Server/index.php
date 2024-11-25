@@ -35,7 +35,7 @@ switch ($request[0]) {
                 echo register($_POST['username'], $_POST['password'], $sbservice);
                 break;
             case 'users':
-                echo users($mdb);
+                echo users($sbservice);
         }
         break;
 

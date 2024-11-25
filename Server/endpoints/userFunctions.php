@@ -12,7 +12,7 @@ function login($username, $password, $service) {
 
             http_response_code(200); 
             return json_encode(['message' => 'Login successful']);
-            
+
         } else {
             http_response_code(401);
             return json_encode(['error' => 'Invalid username or password']);
@@ -51,14 +51,16 @@ function register($username, $password, $service) {
     }
 }
 
-function users($db) {
-    $users = $db->users->find([], ['projection' => ['username' => 1]]);
+function users($service) {
+    $db = $service->initializeDatabase('users', 'id');
 
-    $userList = [];
-    foreach ($users as $user) {
-        $userList[] = ['id' => (string)$user->_id, 'username' => $user['username']];
+    try{
+        $users = $db->fetchAll()->getResult();
+
+        http_response_code(200); 
+        return json_encode(['users' => $users]);
+    } catch (Error $e) {
+        http_response_code(500);
+        return $e->getMessage();
     }
-
-    http_response_code(200); 
-    return json_encode(['users' => $userList]);
 }
