@@ -1,48 +1,48 @@
 <?php
 
-function getTasks($view, $user, $db) {
+function getTasks($view, $user, $service, $mdb) {
+    $db = $service->initializeDatabase('tasks', 'id');
+
     try {
         if ($view === "your-tasks") {
-            $results = $db->tasks->find([
-                'assigned_to' => $user
-            ]);
+            $result = $db->findBy('assigned_to', $user)->getResult();
         } else {
-            $results = $db->tasks->find([
-                'status' => "Unassigned"
-            ]);
+            $result = $db->findBy('status', "Unassigned")->getResult();
         }
 
-        $tasks = iterator_to_array($results);
+        $tasks = iterator_to_array($result);
 
         http_response_code(200);
         return json_encode(['message' => $tasks]);
 
-    } catch (Exception $e) {
-        error_log($e->getMessage());
-        http_response_code(401);
-        return json_encode(['message' => 'An error occurred.']);
+    }  catch (Error $e) {
+        http_response_code(500);
+        return $e->getMessage();
     }
 }
 
-function createTask($name, $desc, $img, $installer, $db) {
+function createTask($name, $desc, $img, $installer, $service, $mdb) {
+    $db = $service->initializeDatabase('tasks', 'id');
+
     try {
-        $db->tasks->insertOne([
+        $newtask = [
             'name' => $name,
             'desc' => $desc,
             'img' => $img,
             'status' => "Unassigned",
-            'assigned_to' => [],
-            'created_at' => new MongoDB\BSON\UTCDateTime(),
+            'assigned_to' => "",
+            'created_at' => date("Y-m-d H:i:s"),
             'comments' => [],
-            'installer' => $installer,
-        ]);
+            'installer' => $installer
+        ];
+
+        $db->insert($newtask);
 
         http_response_code(201);
         echo json_encode(["message" => "Task created successfully."]);
 
-    } catch (Error $e) {
-        error_log($e);
+    }  catch (Error $e) {
         http_response_code(500);
-        echo json_encode(["error" => "An unexpected error occurred."]);
+        return $e->getMessage();
     }
 }

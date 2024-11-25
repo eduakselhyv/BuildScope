@@ -41,7 +41,7 @@ function UsersPage() {
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    fetch('/users')
+    fetch('http://localhost:8000/users/users')
       .then((response) => {
         if (!response.ok) {
           throw new Error('Failed to fetch users');
@@ -50,7 +50,7 @@ function UsersPage() {
       })
       .then((data) => {
         const Users: User[] = data.users.map((user: any) => ({
-          id: user._id,
+          id: user.id,
           username: user.username,
         }));
         setUsers(Users);
