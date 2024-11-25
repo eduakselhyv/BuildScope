@@ -202,6 +202,7 @@ function TasksPage() {
                   <Input
                     className={styles.input}
                     type="text"
+                    maxLength={90}
                     placeholder="Add a comment"
                     value={newComment[task.id] || ""}
                     onChange={(e) => handleCommentChange(task.id, e.target.value)}
