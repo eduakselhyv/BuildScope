@@ -87,6 +87,11 @@ function LoginPage() {
 
   // Register
   async function register() {
+    if (username === "" || password === "") {
+      alert("Username and password are required!");
+      return;
+    }
+
     const body = new URLSearchParams();
     body.append('username', username);
     body.append('password', password);

@@ -12,8 +12,14 @@ require 'endpoints/userFunctions.php';
 require 'endpoints/taskFunctions.php';
 
 // Connect to MongoDB
-$client = new MongoDB\Client("mongodb+srv://akselihyvonen:7dvc2uBvP9YL0jae@mediareview.sorsm.mongodb.net/?retryWrites=true&w=majority&appName=MediaReview");
-$db = $client->selectDataBase('mediareview');
+$mdbclient = new MongoDB\Client("mongodb+srv://akselihyvonen:7dvc2uBvP9YL0jae@mediareview.sorsm.mongodb.net/?retryWrites=true&w=majority&appName=MediaReview");
+$mdb = $mdbclient->selectDataBase('mediareview');
+
+// Connect to supabase
+$sbservice = new PHPSupabase\Service(
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZpa3V4eG1pcWRsa3B0am9nbWttIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTczMjUzNTU5MywiZXhwIjoyMDQ4MTExNTkzfQ.gAiOOrJlr3tNJuZJIbMn0vzSROLFyphBOXP_JAL-ClE",
+    "https://vikuxxmiqdlkptjogmkm.supabase.co"
+);
 
 // Get data from request
 $method = $_SERVER['REQUEST_METHOD'];
@@ -23,23 +29,23 @@ switch ($request[0]) {
     case 'users':
         switch ($request[1]) {
             case 'login':
-                echo login($_POST['username'], $_POST['password'], $db);
+                echo login($_POST['username'], $_POST['password'], $sbservice);
                 break;
             case 'register':
-                echo register($_POST['username'], $_POST['password'], $db);
+                echo register($_POST['username'], $_POST['password'], $sbservice);
                 break;
             case 'users':
-                echo users($db);
+                echo users($sbservice);
         }
         break;
 
     case 'tasks':
         switch ($request[1]) {
             case 'get-tasks':
-                echo getTasks($_GET['view'], $_GET['user'], $db);
+                echo getTasks($_GET['view'], $_GET['user'], $sbservice, $mdb);
                 break;
             case 'create-task':
-                echo createTask($_POST['name'], $_POST['desc'], $_POST['img'], $_POST['installer'], $db);
+                echo createTask($_POST['name'], $_POST['desc'], $_POST['img'], $_POST['installer'], $sbservice, $mdb);
                 break;
             case 'delete-task':
                 break;
