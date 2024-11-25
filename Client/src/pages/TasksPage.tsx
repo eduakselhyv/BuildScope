@@ -11,6 +11,7 @@ import {
   Button
 } from "@fluentui/react-components";
 import { makeStyles } from '@griffel/react';
+import axios from 'axios';
 
 const useStyles = makeStyles({
   title: {
@@ -69,12 +70,15 @@ interface Comment {
 }
 
 interface Task {
-  id: string; // Task id
+  _id: string; // Task id
   name: string; // Task name
-  installer: string; // Person who did the installation
-  media: string; // Media linked to task
+  desc: string;
+  img: string;
   status: string; // Status of task
+  assigned_to: Array<String>;
+  created_at: Date;
   comments: Comment[];
+  installer: string; // Person who did the installation
 }
 
 function TasksPage() {
@@ -83,37 +87,13 @@ function TasksPage() {
   const [newComment, setNewComment] = useState<{ [key: string]: string }>({}); // Variable for storing new comments
   const styles = useStyles();
 
-  function displayTasks(view: string) {
+  async function displayTasks(view: string) {
     setCurrentView(view);
 
-    // Function for getting tasks. Change when server implemented
-    const fetchedTasks = [
-      {
-        id: "0",
-        name: "Bolted panels",
-        installer: "John Doe",
-        media: "https://i.ytimg.com/vi/rvX8cS-v2XM/hq720.jpg",
-        status: "Waiting",
-        comments: [],
-      },
-      {
-        id: "1",
-        name: "Metal plating",
-        installer: "Jane Doe",
-        media: "https://i.ytimg.com/vi/rvX8cS-v2XM/hq720.jpg",
-        status: "Approved",
-        comments: [
-          { user: "user1", comment: "This is a comment", date: "14.10.2024" },
-          {
-            user: "user2",
-            comment: "This is another comment",
-            date: "15.10.2024",
-          },
-        ],
-      },
-    ];
-
-    setTasks(fetchedTasks);
+    const response = await axios.get(`http://localhost:8000/tasks/get-tasks?view=${view}&user=${localStorage.getItem('user')}`)
+    setTasks(response.data.message);
+    
+    
   }
 
   function changeStatus(value: string, id: string) {
@@ -130,7 +110,7 @@ function TasksPage() {
 
     if (commentText) {
       const updatedTasks = tasks.map((task) => {
-        if (task.id === taskId) {
+        if (task._id === taskId) {
           const newComment: Comment = {
             user: localStorage.user, // currently just the user in localstorage so might need to change later not sure
             comment: commentText,
@@ -152,43 +132,31 @@ function TasksPage() {
   }, []);
 
   return (
-    <div className="tasksholder">
-      <nav className="tasknav">
-        <div className="task-option" onClick={() => displayTasks("your-tasks")}>
-          Your tasks
-        </div>
-        <div
-          className="task-option"
-          onClick={() => displayTasks("unassigned-tasks")}
-        >
-          Unassigned tasks
-        </div>
+    <div className='tasksholder'>
+      <nav className='tasknav'>
+        <div className='task-option' onClick={() => displayTasks("your-tasks")}>Your tasks</div>
+        <div className='task-option' onClick={() => displayTasks("unassigned-tasks")}>Unassigned tasks</div>
       </nav>
 
-      <div className="task-content">
-        {tasks.map((task) => (
-          <div className="task-item">
-            <img className="task-img" src={task.media} alt={task.name} />
+      <div className='task-content'>
+        {
+          tasks.map((task) => (
+            <div className='task-item'>
+              <img className='task-img' src={task.img} alt={task.name}/>
 
-            <div className="task-info">
-              <div className="task-name">{task.name}</div>
-              <div className="installer-name">Installer: {task.installer}</div>
+              <div className='task-info'> 
+                <div className='task-name'>{task.name}</div>
+                <div className='installer-name'>Installer: {task.installer}</div>
 
-              <div className="task-status">
-                <Label htmlFor="status-select">Status: </Label>
-                <Dropdown
-                  id="status-select"
-                  onChange={(e) =>
-                    changeStatus((e.target as HTMLSelectElement).value, task.id)
-                  }
-                  placeholder={task.status}
-                >
-                  <Option value="Waiting">Waiting</Option>
-                  <Option value="Approved">Approved</Option>
-                  <Option value="Denied">Denied</Option>
-                </Dropdown>
+                <div className='task-status'>
+                  <Label htmlFor="status-select">Status: </Label>
+                  <Dropdown id="status-select" onChange={(e) => changeStatus((e.target as HTMLSelectElement).value, task._id)} placeholder={task.status}>
+                    <Option value="Waiting">Waiting</Option>
+                    <Option value="Approved">Approved</Option>
+                    <Option value="Denied">Denied</Option>
+                  </Dropdown>
+                </div>
               </div>
-            </div>
 
             <div className={styles.taskComments}>
               <div className={styles.title}>Comments:</div>
@@ -206,12 +174,12 @@ function TasksPage() {
                     type="text"
                     maxLength={90}
                     placeholder="Add a comment"
-                    value={newComment[task.id] || ""}
-                    onChange={(e) => handleCommentChange(task.id, e.target.value)}
+                    value={newComment[task._id] || ""}
+                    onChange={(e) => handleCommentChange(task._id, e.target.value)}
                   />
                 </Field>
                   <div className={styles.button}>
-                    <Button onClick={() => submitComment(task.id)}>Submit</Button>
+                    <Button onClick={() => submitComment(task._id)}>Submit</Button>
                   </div>
               </div>
             </div>
