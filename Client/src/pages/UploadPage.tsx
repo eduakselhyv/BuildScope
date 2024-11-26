@@ -27,13 +27,13 @@ function UploadPage() {
   };
 
   const onImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files[0]) {
+     if (event.target.files && event.target.files[0]) {
       setImg(URL.createObjectURL(event.target.files[0]));
       setFile(URL.createObjectURL(event.target.files[0]));
-    } else if (event.target.value) {
+    } /* else  if (event.target.value) {
       setImg(event.target.value);
       setFile(event.target.value);
-    }
+    } */
   };
 
   return (
@@ -59,7 +59,7 @@ function UploadPage() {
             accept="image/png, image/jpeg"
             onChange={onImageChange}
           />
-
+{/* 
           <Label htmlFor="url">or Add URL</Label>
           <input 
             id="url" 
@@ -68,7 +68,7 @@ function UploadPage() {
             placeholder="Alternatively add URL" 
             pattern="https?://.+" 
             onChange={onImageChange}
-          />
+          /> */}
           <img src={file} alt="preview image" className='file'/>
         </fieldset>
 
