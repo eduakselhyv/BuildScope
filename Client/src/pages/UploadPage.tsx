@@ -11,17 +11,30 @@ function UploadPage() {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const body = new URLSearchParams();
-    body.append('name', name);
-    body.append('desc', desc);
-    body.append('img', img);
-    body.append('installer', localStorage.getItem('user') as string);
+    const formData = new FormData();
+    formData.append('name', name);
+    formData.append('desc', desc);
+    formData.append('installer', localStorage.getItem('user') as string);
+
+    const fileInput = document.getElementById('file') as HTMLInputElement;
+    if (fileInput.files && fileInput.files.length > 0) {
+      formData.append('media', fileInput.files[0]);
+    } else {
+      formData.append('img', img);
+    }
 
     try {
-      const response = await axios.post('http://localhost:8000/tasks/create-task', body, {headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
+      const response = await axios.post('http://localhost:8000/tasks/create-task', formData, {headers: {'Content-Type': 'multipart/form-data'}})
       alert(response.data.message);
     } catch {
       alert("An unexpected error has occurred.");
+    }
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files ? event.target.files[0] : null;
+    if (file) {
+      setImg(URL.createObjectURL(file));
     }
   };
 
@@ -46,6 +59,7 @@ function UploadPage() {
             name="media" 
             type="file" 
             accept="image/png, image/jpeg" 
+            onChange={handleFileChange}
           />
 
           <Label htmlFor="url">or Add URL</Label>

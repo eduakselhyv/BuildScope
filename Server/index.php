@@ -45,7 +45,20 @@ switch ($request[0]) {
                 echo getTasks($_GET['view'], $_GET['user'], $sbservice, $mdb);
                 break;
             case 'create-task':
-                echo createTask($_POST['name'], $_POST['desc'], $_POST['img'], $_POST['installer'], $sbservice, $mdb);
+                $img = '';
+                $uploadDir = 'uploads/';
+                if (!is_dir($uploadDir)) {
+                    mkdir($uploadDir, 0777, true);
+                }
+                if (isset($_FILES['media']) && $_FILES['media']['error'] == UPLOAD_ERR_OK) {
+                    $uploadFile = $uploadDir . basename($_FILES['media']['name']);
+                    if (move_uploaded_file($_FILES['media']['tmp_name'], $uploadFile)) {
+                        $img = '/' . $uploadFile; // Ensure the path is relative to the server root
+                    }
+                } else {
+                    $img = $_POST['img'];
+                }
+                echo createTask($_POST['name'], $_POST['desc'], $img, $_POST['installer'], $sbservice, $mdb);
                 break;
             case 'delete-task':
                 break;

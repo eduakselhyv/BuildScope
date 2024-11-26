@@ -51,9 +51,9 @@ function TasksPage() {
 
       <div className='task-content'>
         {
-          tasks.map((task) => (
-            <div className='task-item'>
-              <img className='task-img' src={task.img}/>
+          tasks.map((task, index) => (
+            <div className='task-item' key={index}>
+              <img className='task-img' src={`http://localhost:8000${task.img}`} alt={task.name} />
 
               <div className='task-info'> 
                 <div className='task-name'>{task.name}</div>
@@ -71,8 +71,8 @@ function TasksPage() {
         
               <div className='task-comments'>
                 Comments:
-                {task.comments.map((comment) => (
-                  <div className='comment-holder'>
+                {task.comments.map((comment, commentIndex) => (
+                  <div className='comment-holder' key={commentIndex}>
                     <div className='comment-user'>{comment.user}</div>
                     <div className='comment'>{comment.comment}</div>
                     <div className='comment-date'>{comment.date}</div>
