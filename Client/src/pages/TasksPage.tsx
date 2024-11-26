@@ -53,7 +53,7 @@ function TasksPage() {
         {
           tasks.map((task, index) => (
             <div className='task-item' key={index}>
-              <img className='task-img' src={`http://localhost:8000${task.img}`} alt={task.name} />
+              <img className='task-img' src={task.img.startsWith('http') ? task.img : `http://localhost:8000${task.img}`} alt={task.name} />
 
               <div className='task-info'> 
                 <div className='task-name'>{task.name}</div>

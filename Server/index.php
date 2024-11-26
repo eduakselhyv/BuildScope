@@ -55,7 +55,7 @@ switch ($request[0]) {
                     if (move_uploaded_file($_FILES['media']['tmp_name'], $uploadFile)) {
                         $img = '/' . $uploadFile; // Ensure the path is relative to the server root
                     }
-                } else {
+                } else if (isset($_POST['img']) && !empty($_POST['img'])) {
                     $img = $_POST['img'];
                 }
                 echo createTask($_POST['name'], $_POST['desc'], $img, $_POST['installer'], $sbservice, $mdb);
