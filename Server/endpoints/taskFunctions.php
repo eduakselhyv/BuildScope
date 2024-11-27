@@ -42,7 +42,7 @@ function createTask($name, $desc, $img, $installer, $service, $mdb) {
         $id = $db->getLastInsertId();
 
         $mdb->image->insertOne([
-            'task-id' => $id,
+            'task_id' => $id,
             'img' => $img
         ]);
 
@@ -55,6 +55,26 @@ function createTask($name, $desc, $img, $installer, $service, $mdb) {
     }
 }
 
-function updateTask($id, $new, $service, $mdb){
+function updateTask($id, $user, $comment, $date, $service, $mdb){
+    $db = $service->initializeDatabase('tasks', 'id');
+    
+    try {
+        $task = $db->find($id)->getResult();
+        if (!$task) {
+            http_response_code(404);
+            echo json_encode(["message" => "Task not found."]);
+            return;
+        }
 
+        $updatedComments = $task['comments'] ?? [];
+        $updatedComments[] = ['user'=>$user, 'comment'=>$comment, 'date'=>$date];
+
+        $db->update($id, ['comments' => $updatedComments]);
+        http_response_code(201);
+        echo json_encode(["message" => "Comment created successfully."]);
+    } catch (Error $e) {
+        http_response_code(500);
+        echo json_encode(["message" => $e->getMessage()]);
+    }
+    
 }

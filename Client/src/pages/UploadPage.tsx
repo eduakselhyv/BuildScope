@@ -6,8 +6,8 @@ import axios from 'axios';
 function UploadPage() {
   const [name, setName] = useState('');
   const [desc, setDesc] = useState('');
-  const [img, setImg] = useState('');
-  const [file, setFile] = useState('');
+  const [img, setImg] = useState<string>('');
+  const [preview, setPreview] = useState('');
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -28,8 +28,13 @@ function UploadPage() {
 
   const onImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
      if (event.target.files && event.target.files[0]) {
-      setImg(URL.createObjectURL(event.target.files[0]));
-      setFile(URL.createObjectURL(event.target.files[0]));
+      const reader = new FileReader();
+      reader.onload = () => {
+        if (reader.result) {
+          setImg(reader.result.toString()); // Base64 string
+        }
+      };
+      setPreview(URL.createObjectURL(event.target.files[0]));
     } /* else  if (event.target.value) {
       setImg(event.target.value);
       setFile(event.target.value);
@@ -69,7 +74,7 @@ function UploadPage() {
             pattern="https?://.+" 
             onChange={onImageChange}
           /> */}
-          <img src={file} alt="preview image" className='file'/>
+          <img src={preview} alt="preview image" className='preview'/>
         </fieldset>
 
         <input type='submit' value="Upload"/>

@@ -70,7 +70,7 @@ interface Comment {
 }
 
 interface Task {
-  _id: string;
+  id: string;
   name: string;
   desc: string;
   img: string;
@@ -103,24 +103,34 @@ function TasksPage() {
   }
 
   // a function for submitting new comments
-  function submitComment(taskId: string) {
+  async function submitComment(taskId: string) {
     const commentText = newComment[taskId];
 
     if (commentText) {
-      const updatedTasks = tasks.map((task) => {
-        if (task._id === taskId) {
-          const newComment: Comment = {
-            user: localStorage.user, // currently just the user in localstorage so might need to change later not sure
-            comment: commentText,
-            date: new Date().toLocaleDateString(),
-          };
-          return { ...task, comments: [...task.comments, newComment] };
-        }
-        return task;
-      });
-
-      setTasks(updatedTasks);
-      setNewComment((prev) => ({ ...prev, [taskId]: "" }));
+      const newComment: Comment = {
+        user: localStorage.getItem('user') as string, // currently just the user in localstorage so might need to change later not sure
+        comment: commentText,
+        date: new Date().toLocaleDateString(),
+      };
+      try {
+        console.log(taskId);
+        
+        console.log(newComment);
+        
+        await axios.post(`http://localhost:8000/tasks/update-task?task-id=${taskId}&commenter=${localStorage.getItem('user')}&comment=${commentText}&commentDate=${new Date().toLocaleDateString()}`);
+  
+        const updatedTasks = tasks.map((task) => {
+          if (task.id === taskId) {
+            return { ...task, comments: [...task.comments, newComment] };
+          }
+          return task;
+        });
+  
+        setTasks(updatedTasks);
+        setNewComment((prev) => ({ ...prev, [taskId]: "" }));
+      } catch (error) {
+        console.error("Failed to submit comment:", error);
+      }
     }
   }
 
@@ -139,8 +149,10 @@ function TasksPage() {
 
       <div className='task-content'>
         {
-          tasks.map((task) => (
-            <div className='task-item'>
+          tasks.map((task) => {
+            //console.log(task.id);
+            return(
+            <div className='task-item' key={task.id}>
               <img className='task-img' src={task.img} alt={task.name}/>
 
               <div className='task-info'> 
@@ -150,7 +162,7 @@ function TasksPage() {
 
                 <div className='task-status'>
                   <Label htmlFor="status-select">Status: </Label>
-                  <Dropdown id="status-select" onChange={(e) => changeStatus((e.target as HTMLSelectElement).value, task._id)} placeholder={task.status}>
+                  <Dropdown id="status-select" onChange={(e) => changeStatus((e.target as HTMLSelectElement).value, task.id)} placeholder={task.status}>
                     <Option value="Waiting">Waiting</Option>
                     <Option value="Approved">Approved</Option>
                     <Option value="Denied">Denied</Option>
@@ -174,17 +186,17 @@ function TasksPage() {
                     type="text"
                     maxLength={90}
                     placeholder="Add a comment"
-                    value={newComment[task._id] || ""}
-                    onChange={(e) => handleCommentChange(task._id, e.target.value)}
+                    value={newComment[task.id] || ""}
+                    onChange={(e) => handleCommentChange(task.id, e.target.value)}
                   />
                 </Field>
                   <div className={styles.button}>
-                    <Button onClick={() => submitComment(task._id)}>Submit</Button>
+                    <Button onClick={() => submitComment(task.id)}>Submit</Button>
                   </div>
               </div>
             </div>
-          </div>
-        ))}
+          </div>)
+      })}
       </div>
     </div>
   );

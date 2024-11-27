@@ -37,7 +37,7 @@ input[type="file"] {
     border-radius: 0;
 }
 
-.file {
+.preview {
     max-height: 300px;
     max-width: 100%;
 }
