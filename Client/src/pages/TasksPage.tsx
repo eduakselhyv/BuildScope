@@ -145,6 +145,7 @@ function TasksPage() {
               <div className='task-info'> 
                 <div className='task-name'>{task.name}</div>
                 <div className='installer-name'>Installer: {task.installer}</div>
+                <div className='task-description'>Description: {task.desc}</div>
 
                 <div className='task-status'>
                   <Label htmlFor="status-select">Status: </Label>
