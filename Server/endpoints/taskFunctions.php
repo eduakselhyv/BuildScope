@@ -6,6 +6,8 @@ function getTasks($view, $user, $service, $mdb) {
     try {
         if ($view === "your-tasks") {
             $result = $db->findBy('assigned_to', $user)->getResult();
+        } else if($view === "your-uploads") {
+            $result = $db->findBy('installer', $user)->getResult();
         } else {
             $result = $db->findBy('status', "Unassigned")->getResult();
         }
@@ -45,4 +47,8 @@ function createTask($name, $desc, $img, $installer, $service, $mdb) {
         http_response_code(500);
         return $e->getMessage();
     }
+}
+
+function updateTask($id, $new, $service, $mdb){
+
 }

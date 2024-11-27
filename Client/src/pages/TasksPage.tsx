@@ -132,7 +132,8 @@ function TasksPage() {
   return (
     <div className='tasksholder'>
       <nav className='tasknav'>
-        <div className='task-option' onClick={() => displayTasks("your-tasks")}>Your tasks</div>
+      <div className='task-option' onClick={() => displayTasks("your-tasks")}>Your tasks</div>
+        <div className='task-option' onClick={() => displayTasks("your-uploads")}>Your Uploads</div>
         <div className='task-option' onClick={() => displayTasks("unassigned-tasks")}>Unassigned tasks</div>
       </nav>
 
