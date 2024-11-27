@@ -1,5 +1,7 @@
 <?php
 
+use GuzzleHttp\Psr7\Message;
+
 function getTasks($view, $user, $service, $mdb) {
     $db = $service->initializeDatabase('tasks', 'id');
 
@@ -11,9 +13,10 @@ function getTasks($view, $user, $service, $mdb) {
         }
 
         $tasks = iterator_to_array($result);
+        $message = "User: $user and View: $view";
 
         http_response_code(200);
-        return json_encode(['message' => $tasks]);
+        return json_encode(['tasks' => $tasks, 'message' => $message]);
 
     }  catch (Error $e) {
         http_response_code(500);

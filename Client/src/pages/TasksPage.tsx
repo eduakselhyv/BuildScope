@@ -30,7 +30,7 @@ function TasksPage() {
     setCurrentView(view);
 
     const response = await axios.get(`http://localhost:8000/tasks/get-tasks?view=${view}&user=${localStorage.getItem('user')}`)
-    setTasks(response.data.message);
+    setTasks(response.data.tasks);
   }
 
   function changeStatus(value: string, id: string) {
