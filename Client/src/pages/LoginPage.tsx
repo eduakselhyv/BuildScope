@@ -56,8 +56,8 @@ function LoginPage() {
       
       if (response.status === 200) {
         localStorage.setItem('user', response.data.user['username']);
-        localStorage.setItem('role', response.data.role['role']);
-        localStorage.setItem('id', response.data.id['id']);
+        localStorage.setItem('role', response.data.user['role']);
+        localStorage.setItem('id', response.data.user['id']);
         window.location.href = '/';
       } else if (response.status === 401) {
         alert("Incorrect password or username!");
