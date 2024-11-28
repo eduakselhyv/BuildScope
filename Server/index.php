@@ -57,6 +57,7 @@ switch ($request[0]) {
             case 'delete-task':
                 break;
             case 'update-task':
+                echo updateTask($_POST['task-id'], $_POST['body'], $sbservice, $mdb);
                 break;
         }
         break;
