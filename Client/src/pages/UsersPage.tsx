@@ -1,6 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { makeStyles } from '@griffel/react';
-import { Card, Text, Spinner } from '@fluentui/react-components';
+import { Card, Text, Spinner, CardFooter, Button, Select, useId, SelectProps } from '@fluentui/react-components';
+import { PersonDeleteRegular } from "@fluentui/react-icons";
+import axios from 'axios';
 
 const useStyles = makeStyles({
   container: {
@@ -28,17 +30,101 @@ const useStyles = makeStyles({
   spinner: {
     marginTop: '20px',
   },
+  userContainer: {
+    maxHeight: '735px',
+    overflowY: 'auto',
+    width: '100%',
+  },
+  role: {
+    color: '#d13438'
+  }
 });
 
 interface User {
   id: string;
   username: string;
+  role: string;
 }
 
-function UsersPage() {
+function UsersPage(props: SelectProps) {
   const classes = useStyles();
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const selectId = useId();
+
+  async function deleteUser(id:string) {
+    const body = new URLSearchParams();
+    body.append('id', id);
+
+    try {
+      await axios.post('http://localhost:8000/users/delete', body, {headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
+    } catch (error) {
+      alert("An unexpected error has occurred");
+    }
+
+    setUsers([]);
+    setLoading(true);
+
+    fetch('http://localhost:8000/users/users')
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch users');
+        }
+        return response.json();
+      })
+      .then((data) => {
+        const Users: User[] = data.users.map((user: any) => ({
+          id: user.id,
+          username: user.username,
+          role: user.role
+        }));
+        setUsers(Users);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error('Error fetching users:', error);
+        setLoading(false);
+      });
+  }
+
+  async function changeRole(id:string, role:string) {
+    console.log(role);
+    
+    const body = new URLSearchParams();
+    body.append('id', id);
+    body.append('role', role)
+
+    try {
+      await axios.post('http://localhost:8000/users/updaterole', body, {headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
+    } catch (error) {
+      alert("An unexpected error has occurred");
+    }
+
+    setUsers([]);
+    setLoading(true);
+
+    //TODO update only one
+    fetch('http://localhost:8000/users/users')
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch users');
+        }
+        return response.json();
+      })
+      .then((data) => {
+        const Users: User[] = data.users.map((user: any) => ({
+          id: user.id,
+          username: user.username,
+          role: user.role
+        }));
+        setUsers(Users);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error('Error fetching users:', error);
+        setLoading(false);
+      });
+  }
 
   useEffect(() => {
     fetch('http://localhost:8000/users/users')
@@ -52,6 +138,7 @@ function UsersPage() {
         const Users: User[] = data.users.map((user: any) => ({
           id: user.id,
           username: user.username,
+          role: user.role
         }));
         setUsers(Users);
         setLoading(false);
@@ -71,12 +158,27 @@ function UsersPage() {
       <Text className={classes.title} block>
         User List
       </Text>
-      {users.map((user) => (
-        <Card key={user.id} className={classes.userCard}>
-          <Text>{user.username}</Text>
-          <Text>ID: {user.id}</Text>
-        </Card>
-      ))}
+      <div className={classes.userContainer}>
+        {users.map((user) => (
+          <Card key={user.id} className={classes.userCard}>
+            <Text>{user.username}</Text>
+            <Text>ID: {user.id}</Text>
+            <Text className={classes.role}>{user.role}</Text>
+            <CardFooter>
+              {user.username !== localStorage.getItem('user') && (
+                <>
+                <Button icon={<PersonDeleteRegular fontSize={16} />} onClick={() => deleteUser(user.id)}>Delete</Button>
+                  <Select id={selectId} {...props} onChange={(e) => changeRole(user.id, e.target.value)}>
+                    <option>Admin</option>
+                    <option>Reviewer</option>
+                    <option>Uploader</option>
+                  </Select>
+                </>
+              )}
+            </CardFooter>
+          </Card>
+        ))}
+      </div>
     </div>
   );
 }
