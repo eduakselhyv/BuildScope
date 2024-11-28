@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Button, Field, Input } from '@fluentui/react-components';
 import { makeStyles } from '@griffel/react';
 import axios from 'axios';
@@ -56,8 +55,9 @@ function LoginPage() {
       const response = await axios.post('http://localhost:8000/users/login', body, {headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
       
       if (response.status === 200) {
-        localStorage.setItem('user', username);
-        localStorage.setItem('role', response.data.role)
+        localStorage.setItem('user', response.data.user['username']);
+        localStorage.setItem('role', response.data.user['role']);
+        localStorage.setItem('id', response.data.user['id']);
         window.location.href = '/';
       } else if (response.status === 401) {
         alert("Incorrect password or username!");
