@@ -16,7 +16,6 @@ function getTasks($view, $user, $service, $mdb) {
 
         http_response_code(200);
         return json_encode(['message' => $tasks]);
-
     }  catch (Error $e) {
         http_response_code(500);
         return $e->getMessage();

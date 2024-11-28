@@ -8,7 +8,7 @@ function login($username, $password, $service) {
 
         if ($user && password_verify($password, $user[0]->password)) {
             http_response_code(200); 
-            return json_encode(['message' => 'Login successful', 'role' => $user[0]->role]);
+            return json_encode(['message' => 'Login successful', 'user' => $user[0]]);
         } else {
             http_response_code(401);
             return json_encode(['error' => 'Invalid username or password']);
