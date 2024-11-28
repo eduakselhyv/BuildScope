@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { makeStyles } from '@griffel/react';
 import { Card, Text, Spinner, CardFooter, Button } from '@fluentui/react-components';
 import { PersonDeleteRegular } from "@fluentui/react-icons";
@@ -29,6 +29,11 @@ const useStyles = makeStyles({
   },
   spinner: {
     marginTop: '20px',
+  },
+  userContainer: {
+    maxHeight: '735px',
+    overflowY: 'auto',
+    width: '100%',
   },
 });
 
@@ -109,17 +114,19 @@ function UsersPage() {
       <Text className={classes.title} block>
         User List
       </Text>
-      {users
-        .filter(user => user.username !== localStorage.getItem('user'))
-        .map((user) => (
+      <div className={classes.userContainer}>
+        {users.map((user) => (
           <Card key={user.id} className={classes.userCard}>
             <Text>{user.username}</Text>
             <Text>ID: {user.id}</Text>
             <CardFooter>
-              <Button icon={<PersonDeleteRegular fontSize={16} />} onClick={(e) => deleteUser(user.id)}>Remove</Button>
-            </CardFooter>
+              {user.username !== localStorage.getItem('user') && (
+                <Button icon={<PersonDeleteRegular fontSize={16} />} onClick={(e) => deleteUser(user.id)}>Delete</Button>
+              )}
+          </CardFooter>
           </Card>
         ))}
+      </div>
     </div>
   );
 }
