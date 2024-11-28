@@ -57,6 +57,8 @@ function createComment($taskId, $user, $comment, $date, $service) {
 
         $newComment = "{'user': '$user', 'comment': '$comment', 'date': '$date'";
 
+        return json_encode(["message" => $existingComments + $newComment]);
+
         $result = $db->update($taskId, ['comments' => $existingComments + $newComment]);
 
         if ($result) {
