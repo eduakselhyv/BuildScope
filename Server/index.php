@@ -54,6 +54,16 @@ switch ($request[0]) {
         }
         break;
 
+    case 'comments':
+        switch ($request[1]) {
+            case 'create-comment':
+                echo createComment($_POST['taskId'], $_POST['user'], $_POST['comment'], $_POST['date'], $sbservice);
+                break;
+            case 'delete-comment':
+                echo deleteComment($_POST['taskId'], $_POST['commentIndex']);
+                break;
+        }
+
     default:
         http_response_code(404);
         echo json_encode(['error' => 'Endpoint not found']);

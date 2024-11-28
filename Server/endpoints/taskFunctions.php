@@ -46,3 +46,32 @@ function createTask($name, $desc, $img, $installer, $service, $mdb) {
         return $e->getMessage();
     }
 }
+
+function createComment($taskId, $user, $comment, $date, $service) {
+    $db = $service->initializeDatabase('tasks', 'id');
+
+    try {
+
+        $existingComments = $db->findBy('id', $taskId)->getResult();
+        $existingComments = $existingComments[0]['comments'];
+
+        $newComment = "{'user': '$user', 'comment': '$comment', 'date': '$date'";
+
+        $result = $db->update($taskId, ['comments' => $existingComments + $newComment]);
+
+        if ($result) {
+            http_response_code(200);
+            return json_encode(["message" => "Comment added successfully."]);
+        } else {
+            http_response_code(500);
+            return json_encode(["message" => "Failed to add comment."]);
+        }
+    } catch (Error $e) {
+        http_response_code(500);
+        return $e->getMessage();
+    }
+}
+
+function deleteComment($taskId, $commentIndex) {
+
+}

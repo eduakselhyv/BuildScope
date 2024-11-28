@@ -103,24 +103,37 @@ function TasksPage() {
   }
 
   // a function for submitting new comments
-  function submitComment(taskId: string) {
+  async function submitComment(taskId: string) {
     const commentText = newComment[taskId];
 
     if (commentText) {
-      const updatedTasks = tasks.map((task) => {
-        if (task.id === taskId) {
-          const newComment: Comment = {
-            user: localStorage.user, // currently just the user in localstorage so might need to change later not sure
+        const newComment: Comment = {
+            user: localStorage.user, 
             comment: commentText,
             date: new Date().toLocaleDateString(),
-          };
-          return { ...task, comments: [...task.comments, newComment] };
-        }
-        return task;
-      });
+        };
 
-      setTasks(updatedTasks);
-      setNewComment((prev) => ({ ...prev, [taskId]: "" }));
+      const body = new URLSearchParams();
+      body.append('taskId', taskId);
+      body.append('user', localStorage.user);
+      body.append('comment', commentText);
+      body.append('date', new Date().toLocaleDateString());
+
+      try {
+        const response = await axios.post('http://localhost:8000/comments/create-comment', body, {headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
+        alert(response.data.message);
+
+        const updatedTasks = tasks.map((task) => {
+          if (task.id === taskId) {
+            return { ...task, comments: [...task.comments, newComment] };
+          }
+          return task;
+        });
+        setTasks(updatedTasks);
+        setNewComment((prev) => ({ ...prev, [taskId]: "" }));
+      } catch {
+        alert("An unexpected error has occurred.");
+      }
     }
   }
 
