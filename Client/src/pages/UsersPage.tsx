@@ -165,7 +165,7 @@ function UsersPage(props: SelectProps) {
             <Text>ID: {user.id}</Text>
             <Text className={classes.role}>{user.role}</Text>
             <CardFooter>
-              {user.username !== localStorage.getItem('user') && localStorage.getItem('role') !== "admin" && (
+              {user.username !== localStorage.getItem('user') || localStorage.getItem('role') === "admin" && (
                 <>
                   <Button icon={<PersonDeleteRegular fontSize={16} />} onClick={() => deleteUser (user.id)}>Delete</Button>
                   <Select id={selectId} {...props} onChange={(e) => changeRole(user.id, e.target.value)}>
