@@ -56,7 +56,9 @@ function LoginPage() {
       const response = await axios.post('http://localhost:8000/users/login', body, {headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
       
       if (response.status === 200) {
-        localStorage.setItem('user', username);
+        localStorage.setItem('user', response.data.user['username']);
+        localStorage.setItem('role', response.data.role['role']);
+        localStorage.setItem('id', response.data.id['id']);
         window.location.href = '/';
       } else if (response.status === 401) {
         alert("Incorrect password or username!");

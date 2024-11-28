@@ -165,13 +165,13 @@ function UsersPage(props: SelectProps) {
             <Text>ID: {user.id}</Text>
             <Text className={classes.role}>{user.role}</Text>
             <CardFooter>
-              {user.username !== localStorage.getItem('user') && (
+              {user.username !== localStorage.getItem('user') && localStorage.getItem('role') !== "admin" && (
                 <>
-                <Button icon={<PersonDeleteRegular fontSize={16} />} onClick={() => deleteUser(user.id)}>Delete</Button>
+                  <Button icon={<PersonDeleteRegular fontSize={16} />} onClick={() => deleteUser (user.id)}>Delete</Button>
                   <Select id={selectId} {...props} onChange={(e) => changeRole(user.id, e.target.value)}>
-                    <option>Admin</option>
-                    <option>Reviewer</option>
-                    <option>Uploader</option>
+                    <option value="admin">Admin</option>
+                    <option value="reviewer">Reviewer</option>
+                    <option value="uploader">Uploader</option>
                   </Select>
                 </>
               )}
