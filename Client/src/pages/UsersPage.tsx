@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { makeStyles } from '@griffel/react';
-import { Card, Text, Spinner, CardFooter, Button } from '@fluentui/react-components';
+import { Card, Text, Spinner, CardFooter, Button, Select, useId, SelectProps } from '@fluentui/react-components';
 import { PersonDeleteRegular } from "@fluentui/react-icons";
 import axios from 'axios';
 
@@ -35,17 +35,22 @@ const useStyles = makeStyles({
     overflowY: 'auto',
     width: '100%',
   },
+  role: {
+    color: '#d13438'
+  }
 });
 
 interface User {
   id: string;
   username: string;
+  role: string;
 }
 
-function UsersPage() {
+function UsersPage(props: SelectProps) {
   const classes = useStyles();
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const selectId = useId();
 
   async function deleteUser(id:string) {
     const body = new URLSearchParams();
@@ -73,6 +78,7 @@ function UsersPage() {
         const Users: User[] = data.users.map((user: any) => ({
           id: user.id,
           username: user.username,
+          role: "admin"
         }));
         setUsers(Users);
         setLoading(false);
@@ -81,6 +87,11 @@ function UsersPage() {
         console.error('Error fetching users:', error);
         setLoading(false);
       });
+  }
+
+  async function changeRole(role:string) {
+    console.log(role);
+    //TODO: Backend
   }
 
   useEffect(() => {
@@ -95,6 +106,7 @@ function UsersPage() {
         const Users: User[] = data.users.map((user: any) => ({
           id: user.id,
           username: user.username,
+          role: "admin"
         }));
         setUsers(Users);
         setLoading(false);
@@ -119,9 +131,17 @@ function UsersPage() {
           <Card key={user.id} className={classes.userCard}>
             <Text>{user.username}</Text>
             <Text>ID: {user.id}</Text>
+            <Text className={classes.role}>{user.role}</Text>
             <CardFooter>
               {user.username !== localStorage.getItem('user') && (
+                <>
                 <Button icon={<PersonDeleteRegular fontSize={16} />} onClick={(e) => deleteUser(user.id)}>Delete</Button>
+                  <Select id={selectId} {...props} onChange={(e) => changeRole(e.target.value)}>
+                    <option>Admin</option>
+                    <option>Reviewer</option>
+                    <option>Uploader</option>
+                  </Select>
+                </>
               )}
           </CardFooter>
           </Card>
