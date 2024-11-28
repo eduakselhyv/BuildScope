@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { makeStyles } from '@griffel/react';
 import { Card, Text, Spinner, CardFooter, Button, Select, useId, SelectProps } from '@fluentui/react-components';
-import { PersonDeleteRegular } from "@fluentui/react-icons";
+import { PersonDelete24Regular } from "@fluentui/react-icons";
 import axios from 'axios';
 
 const useStyles = makeStyles({
@@ -124,19 +124,9 @@ function UsersPage(props: SelectProps) {
             <Text>ID: {user.id}</Text>
             <Text className={classes.role}>{user.role}</Text>
             <CardFooter>
-              {user.username !== localStorage.getItem('user') && (
+              {user.username !== localStorage.getItem('user') && localStorage.getItem('role') === "admin" && (
                 <>
-                  <Button icon={<PersonDeleteRegular fontSize={16} />} onClick={() => deleteUser (user.id)}>Delete</Button>
-                  <Select id={selectId} {...props} onChange={(e) => changeRole(user.id, e.target.value)}>
-                    <option value="admin">Admin</option>
-                    <option value="reviewer">Reviewer</option>
-                    <option value="uploader">Uploader</option>
-                  </Select>
-                </>
-              )}
-              {localStorage.getItem('role') === "admin" && (
-                <>
-                  <Button icon={<PersonDeleteRegular fontSize={16} />} onClick={() => deleteUser (user.id)}>Delete</Button>
+                  <Button icon={<PersonDelete24Regular />} onClick={() => deleteUser (user.id)}>Delete</Button>
                   <Select id={selectId} {...props} onChange={(e) => changeRole(user.id, e.target.value)}>
                     <option value="admin">Admin</option>
                     <option value="reviewer">Reviewer</option>
