@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@griffel/react';
-import { Card, Text, Spinner } from '@fluentui/react-components';
+import { Card, Text, Spinner, CardFooter, Button } from '@fluentui/react-components';
+import { PersonDeleteRegular } from "@fluentui/react-icons";
+import axios from 'axios';
 
 const useStyles = makeStyles({
   container: {
@@ -40,6 +42,42 @@ function UsersPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
+  async function deleteUser(id:string) {
+    const body = new URLSearchParams();
+    body.append('id', id);
+
+    console.log(id);
+
+    try {
+      await axios.post('http://localhost:8000/users/delete', body, {headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
+    } catch (error) {
+      alert("An unexpected error has occurred");
+    }
+
+    setUsers([]);
+    setLoading(true);
+
+    fetch('http://localhost:8000/users/users')
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch users');
+        }
+        return response.json();
+      })
+      .then((data) => {
+        const Users: User[] = data.users.map((user: any) => ({
+          id: user.id,
+          username: user.username,
+        }));
+        setUsers(Users);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error('Error fetching users:', error);
+        setLoading(false);
+      });
+  }
+
   useEffect(() => {
     fetch('http://localhost:8000/users/users')
       .then((response) => {
@@ -71,12 +109,17 @@ function UsersPage() {
       <Text className={classes.title} block>
         User List
       </Text>
-      {users.map((user) => (
-        <Card key={user.id} className={classes.userCard}>
-          <Text>{user.username}</Text>
-          <Text>ID: {user.id}</Text>
-        </Card>
-      ))}
+      {users
+        .filter(user => user.username !== localStorage.getItem('user'))
+        .map((user) => (
+          <Card key={user.id} className={classes.userCard}>
+            <Text>{user.username}</Text>
+            <Text>ID: {user.id}</Text>
+            <CardFooter>
+              <Button icon={<PersonDeleteRegular fontSize={16} />} onClick={(e) => deleteUser(user.id)}>Remove</Button>
+            </CardFooter>
+          </Card>
+        ))}
     </div>
   );
 }

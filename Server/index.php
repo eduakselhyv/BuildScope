@@ -36,6 +36,10 @@ switch ($request[0]) {
                 break;
             case 'users':
                 echo users($sbservice);
+                break;
+            case 'delete':
+                echo deleteUser($_POST['id'], $sbservice);
+                break;
         }
         break;
 
