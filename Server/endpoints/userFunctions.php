@@ -11,7 +11,7 @@ function login($username, $password, $service) {
             $_SESSION['username'] = $username;
 
             http_response_code(200); 
-            return json_encode(['message' => 'Login successful']);
+            return json_encode(['message' => 'Login successful', 'role' => $user[0]->role]);
 
         } else {
             http_response_code(401);
