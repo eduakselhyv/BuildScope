@@ -70,7 +70,7 @@ interface Comment {
 }
 
 interface Task {
-  _id: string;
+  id: string;
   name: string;
   desc: string;
   img: string;
@@ -108,7 +108,7 @@ function TasksPage() {
 
     if (commentText) {
       const updatedTasks = tasks.map((task) => {
-        if (task._id === taskId) {
+        if (task.id === taskId) {
           const newComment: Comment = {
             user: localStorage.user, // currently just the user in localstorage so might need to change later not sure
             comment: commentText,
@@ -122,6 +122,19 @@ function TasksPage() {
       setTasks(updatedTasks);
       setNewComment((prev) => ({ ...prev, [taskId]: "" }));
     }
+  }
+
+  // function for deleting comments
+  function deleteComment(taskId: string, commentIndex: number) {
+    const updatedTasks = tasks.map((task) => {
+      if (task.id === taskId) {
+        const updatedComments = task.comments.filter((_, index) => index !== commentIndex);
+        return { ...task, comments: updatedComments };
+      }
+      return task;
+    });
+  
+    setTasks(updatedTasks);
   }
 
   // Initialize page
@@ -148,7 +161,7 @@ function TasksPage() {
 
                 <div className='task-status'>
                   <Label htmlFor="status-select">Status: </Label>
-                  <Dropdown id="status-select" onChange={(e) => changeStatus((e.target as HTMLSelectElement).value, task._id)} placeholder={task.status}>
+                  <Dropdown id="status-select" onChange={(e) => changeStatus((e.target as HTMLSelectElement).value, task.id)} placeholder={task.status}>
                     <Option value="Waiting">Waiting</Option>
                     <Option value="Approved">Approved</Option>
                     <Option value="Denied">Denied</Option>
@@ -163,6 +176,9 @@ function TasksPage() {
                   <div className={styles.commentUser}>{comment.user}</div>
                   <div className={styles.comment}>{comment.comment}</div>
                   <div className={styles.commentDate}>{comment.date}</div>
+                  <div className={styles.button}>
+                    <Button onClick={() => deleteComment(task.id, index)}>Delete</Button>
+                  </div>
                 </div>
               ))}
               <div className={styles.newComment}>
@@ -172,12 +188,12 @@ function TasksPage() {
                     type="text"
                     maxLength={90}
                     placeholder="Add a comment"
-                    value={newComment[task._id] || ""}
-                    onChange={(e) => handleCommentChange(task._id, e.target.value)}
+                    value={newComment[task.id] || ""}
+                    onChange={(e) => handleCommentChange(task.id, e.target.value)}
                   />
                 </Field>
                   <div className={styles.button}>
-                    <Button onClick={() => submitComment(task._id)}>Submit</Button>
+                    <Button onClick={() => submitComment(task.id)}>Submit</Button>
                   </div>
               </div>
             </div>
