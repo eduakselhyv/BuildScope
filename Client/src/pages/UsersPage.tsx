@@ -58,72 +58,31 @@ function UsersPage(props: SelectProps) {
 
     try {
       await axios.post('http://localhost:8000/users/delete', body, {headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
+
+      setUsers(users => 
+        users.filter(user => user.id !== id)
+      );
     } catch (error) {
       alert("An unexpected error has occurred");
     }
-
-    setUsers([]);
-    setLoading(true);
-
-    fetch('http://localhost:8000/users/users')
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error('Failed to fetch users');
-        }
-        return response.json();
-      })
-      .then((data) => {
-        const Users: User[] = data.users.map((user: any) => ({
-          id: user.id,
-          username: user.username,
-          role: user.role
-        }));
-        setUsers(Users);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error('Error fetching users:', error);
-        setLoading(false);
-      });
   }
 
   async function changeRole(id:string, role:string) {
-    console.log(role);
-    
     const body = new URLSearchParams();
     body.append('id', id);
     body.append('role', role)
 
     try {
-      await axios.post('http://localhost:8000/users/updaterole', body, {headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
+      await axios.post('http://localhost:8000/users/updaterole', body, {headers: {'Content-Type': 'application/x-www-form-urlencoded'}});
+
+      setUsers(users => 
+        users.map(user => 
+          user.id === id ? { ...user, role: role } : user
+        )
+      );
     } catch (error) {
       alert("An unexpected error has occurred");
     }
-
-    setUsers([]);
-    setLoading(true);
-
-    //TODO update only one
-    fetch('http://localhost:8000/users/users')
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error('Failed to fetch users');
-        }
-        return response.json();
-      })
-      .then((data) => {
-        const Users: User[] = data.users.map((user: any) => ({
-          id: user.id,
-          username: user.username,
-          role: user.role
-        }));
-        setUsers(Users);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error('Error fetching users:', error);
-        setLoading(false);
-      });
   }
 
   useEffect(() => {
@@ -165,7 +124,17 @@ function UsersPage(props: SelectProps) {
             <Text>ID: {user.id}</Text>
             <Text className={classes.role}>{user.role}</Text>
             <CardFooter>
-              {user.username !== localStorage.getItem('user') || localStorage.getItem('role') === "admin" && (
+              {user.username !== localStorage.getItem('user') && (
+                <>
+                  <Button icon={<PersonDeleteRegular fontSize={16} />} onClick={() => deleteUser (user.id)}>Delete</Button>
+                  <Select id={selectId} {...props} onChange={(e) => changeRole(user.id, e.target.value)}>
+                    <option value="admin">Admin</option>
+                    <option value="reviewer">Reviewer</option>
+                    <option value="uploader">Uploader</option>
+                  </Select>
+                </>
+              )}
+              {localStorage.getItem('role') === "admin" && (
                 <>
                   <Button icon={<PersonDeleteRegular fontSize={16} />} onClick={() => deleteUser (user.id)}>Delete</Button>
                   <Select id={selectId} {...props} onChange={(e) => changeRole(user.id, e.target.value)}>
