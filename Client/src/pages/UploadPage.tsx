@@ -7,6 +7,7 @@ function UploadPage() {
   const [name, setName] = useState('');
   const [desc, setDesc] = useState('');
   const [img, setImg] = useState('');
+  const [file, setFile] = useState('');
   
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -59,16 +60,6 @@ function UploadPage() {
             onChange={onImageChange}
             required
           />
-{/* 
-          <Label htmlFor="url">or Add URL</Label>
-          <input 
-            id="url" 
-            name="media" 
-            type="text" 
-            placeholder="Alternatively add URL" 
-            pattern="https?://.+" 
-            onChange={onImageChange}
-          /> */}
           <img src={file} alt="preview image" className='file'/>
         </fieldset>
 
