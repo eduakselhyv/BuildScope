@@ -153,11 +153,15 @@ function TasksPage() {
 
                 <div className='task-status'>
                   <Label htmlFor="status-select">Status: </Label>
-                  <Dropdown id="status-select" placeholder={task.status}>
-                    <Option onClick={(e) => changeStatus('Waiting', task.id)} value="Waiting">Waiting</Option>
-                    <Option onClick={(e) => changeStatus('Approved', task.id)} value="Approved">Approved</Option>
-                    <Option onClick={(e) => changeStatus('Denied', task.id)} value="Denied">Denied</Option>
-                  </Dropdown>
+                  {currentView === "your-tasks" ? (
+                    <Dropdown id="status-select" placeholder={task.status}>
+                      <Option onClick={(e) => changeStatus('Waiting', task.id)} value="Waiting">Waiting</Option>
+                      <Option onClick={(e) => changeStatus('Approved', task.id)} value="Approved">Approved</Option>
+                      <Option onClick={(e) => changeStatus('Denied', task.id)} value="Denied">Denied</Option>
+                    </Dropdown>
+                  ) : (
+                    <div>{task.status}</div>
+                  )}
                 </div>
               </div>
 
