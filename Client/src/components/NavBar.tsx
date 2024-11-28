@@ -20,6 +20,58 @@ export function NavBar({ changeView }: InputProps) {
     navigate('/login');
   }
 
+  if (localStorage.getItem('role') === 'admin') {
+    return (
+      <div className="navbar">
+        <h1>BuildScope</h1>
+        <nav>
+          <div className='sidebar-option' onClick={() => handleClick('tasks')}>Tasks</div>
+          <div className='sidebar-option' onClick={() => handleClick('users')}>Users</div>
+        </nav>
+        <div className='usercontent'>
+          <div className='user'>
+            {localStorage.getItem('user')}
+            <p></p>
+            {localStorage.getItem('role')}
+            <div className='logout' onClick={logout}>log out</div>
+          </div>
+        </div>
+      </div>
+    );
+  } else if (localStorage.getItem('reviewer')) {
+    return (
+      <div className="navbar">
+        <h1>BuildScope</h1>
+        <nav>
+          <div className='sidebar-option' onClick={() => handleClick('tasks')}>Tasks</div>
+        </nav>
+        <div className='usercontent'>
+          <div className='user'>
+            {localStorage.getItem('user')}
+            <p></p>
+            {localStorage.getItem('role')}
+            <div className='logout' onClick={logout}>log out</div>
+          </div>
+        </div>
+      </div>
+    );
+  } else if (localStorage.getItem('role') === 'uploader') {
+    <div className="navbar">
+        <h1>BuildScope</h1>
+        <nav>
+          <div className='sidebar-option' onClick={() => handleClick('tasks')}>Tasks</div>
+          <div className='sidebar-option' onClick={() => handleClick('upload')}>Upload</div>
+        </nav>
+        <div className='usercontent'>
+          <div className='user'>
+            {localStorage.getItem('user')}
+            <p></p>
+            {localStorage.getItem('role')}
+            <div className='logout' onClick={logout}>log out</div>
+          </div>
+        </div>
+      </div>
+  }
   return (
     <div className="navbar">
       <h1>BuildScope</h1>
@@ -31,6 +83,8 @@ export function NavBar({ changeView }: InputProps) {
       <div className='usercontent'>
         <div className='user'>
           {localStorage.getItem('user')}
+          <p></p>
+          {localStorage.getItem('role')}
           <div className='logout' onClick={logout}>log out</div>
         </div>
       </div>

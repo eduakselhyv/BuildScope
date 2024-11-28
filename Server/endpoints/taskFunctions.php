@@ -6,6 +6,8 @@ function getTasks($view, $user, $service, $mdb) {
     try {
         if ($view === "your-tasks") {
             $result = $db->findBy('assigned_to', $user)->getResult();
+        } else if($view === "your-uploads") {
+            $result = $db->findBy('installer', $user)->getResult();
         } else {
             $result = $db->findBy('assigned_to', "")->getResult();
         }
@@ -28,7 +30,6 @@ function createTask($name, $desc, $img, $installer, $service, $mdb) {
         $newtask = [
             'name' => $name,
             'desc' => $desc,
-            'img' => $img,
             'status' => "Unassigned",
             'assigned_to' => "",
             'created_at' => date("Y-m-d H:i:s"),
@@ -37,6 +38,13 @@ function createTask($name, $desc, $img, $installer, $service, $mdb) {
         ];
 
         $db->insert($newtask);
+
+        $id = $db->getLastInsertId();
+
+        $mdb->image->insertOne([
+            'task-id' => $id,
+            'img' => $img
+        ]);
 
         http_response_code(201);
         echo json_encode(["message" => "Task created successfully."]);
