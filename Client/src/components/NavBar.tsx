@@ -20,7 +20,7 @@ export function NavBar({ changeView }: InputProps) {
     navigate('/login');
   }
 
-  if (localStorage.getItem('role') === 'Admin') {
+  if (localStorage.getItem('role') === 'admin') {
     return (
       <div className="navbar">
         <h1>BuildScope</h1>
@@ -38,7 +38,7 @@ export function NavBar({ changeView }: InputProps) {
         </div>
       </div>
     );
-  } else if (localStorage.getItem('role') === "Reviewer") {
+  } else if (localStorage.getItem('role') === "reviewer") {
     console.log("YOU ARE A REVIWER")
     return (
       <div className="navbar">
@@ -56,7 +56,7 @@ export function NavBar({ changeView }: InputProps) {
         </div>
       </div>
     );
-  } else if (localStorage.getItem('role') === 'Uploader') {
+  } else if (localStorage.getItem('role') === 'uploader') {
     <div className="navbar">
         <h1>BuildScope</h1>
         <nav>
