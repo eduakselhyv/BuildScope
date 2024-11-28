@@ -40,6 +40,9 @@ switch ($request[0]) {
             case 'delete':
                 echo deleteUser($_POST['id'], $sbservice);
                 break;
+            case 'updaterole':
+                echo updateRole($_POST['id'], $_POST['role'], $sbservice);
+                break;
         }
         break;
 

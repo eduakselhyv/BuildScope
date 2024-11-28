@@ -73,3 +73,21 @@ function deleteUser($id, $service) {
         return $e->getMessage();
     }
 }
+
+function updateRole($id, $role, $service) {
+    $db = $service->initializeDatabase('users', 'id');
+
+    $newRole = [
+        'role' => $role
+    ];
+    
+    try {
+        $db->update($id, $newRole);
+
+        http_response_code(200); 
+        return json_encode(['message' => 'Role changed!']);
+    } catch (Error $e) {
+        http_response_code(500);
+        return $e->getMessage();
+    }
+}

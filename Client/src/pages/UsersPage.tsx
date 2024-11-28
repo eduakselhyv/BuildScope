@@ -56,8 +56,6 @@ function UsersPage(props: SelectProps) {
     const body = new URLSearchParams();
     body.append('id', id);
 
-    console.log(id);
-
     try {
       await axios.post('http://localhost:8000/users/delete', body, {headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
     } catch (error) {
@@ -78,7 +76,7 @@ function UsersPage(props: SelectProps) {
         const Users: User[] = data.users.map((user: any) => ({
           id: user.id,
           username: user.username,
-          role: "admin"
+          role: user.role
         }));
         setUsers(Users);
         setLoading(false);
@@ -89,9 +87,43 @@ function UsersPage(props: SelectProps) {
       });
   }
 
-  async function changeRole(role:string) {
+  async function changeRole(id:string, role:string) {
     console.log(role);
-    //TODO: Backend
+    
+    const body = new URLSearchParams();
+    body.append('id', id);
+    body.append('role', role)
+
+    try {
+      await axios.post('http://localhost:8000/users/updaterole', body, {headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
+    } catch (error) {
+      alert("An unexpected error has occurred");
+    }
+
+    setUsers([]);
+    setLoading(true);
+
+    //TODO update only one
+    fetch('http://localhost:8000/users/users')
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch users');
+        }
+        return response.json();
+      })
+      .then((data) => {
+        const Users: User[] = data.users.map((user: any) => ({
+          id: user.id,
+          username: user.username,
+          role: user.role
+        }));
+        setUsers(Users);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error('Error fetching users:', error);
+        setLoading(false);
+      });
   }
 
   useEffect(() => {
@@ -106,7 +138,7 @@ function UsersPage(props: SelectProps) {
         const Users: User[] = data.users.map((user: any) => ({
           id: user.id,
           username: user.username,
-          role: "admin"
+          role: user.role
         }));
         setUsers(Users);
         setLoading(false);
@@ -135,15 +167,15 @@ function UsersPage(props: SelectProps) {
             <CardFooter>
               {user.username !== localStorage.getItem('user') && (
                 <>
-                <Button icon={<PersonDeleteRegular fontSize={16} />} onClick={(e) => deleteUser(user.id)}>Delete</Button>
-                  <Select id={selectId} {...props} onChange={(e) => changeRole(e.target.value)}>
+                <Button icon={<PersonDeleteRegular fontSize={16} />} onClick={() => deleteUser(user.id)}>Delete</Button>
+                  <Select id={selectId} {...props} onChange={(e) => changeRole(user.id, e.target.value)}>
                     <option>Admin</option>
                     <option>Reviewer</option>
                     <option>Uploader</option>
                   </Select>
                 </>
               )}
-          </CardFooter>
+            </CardFooter>
           </Card>
         ))}
       </div>
