@@ -244,8 +244,6 @@ function TasksPage() {
                     placeholder="Add a comment"
                     value={newComment[task.id] || ""}
                     onChange={(e) => handleCommentChange(task.id, e.target.value)}
-                    value={newComment[task.id] || ""}
-                    onChange={(e) => handleCommentChange(task.id, e.target.value)}
                   />
                 </Field>
                   <div className={styles.button}>
