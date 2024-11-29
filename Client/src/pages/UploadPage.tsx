@@ -6,20 +6,24 @@ import axios from 'axios';
 function UploadPage() {
   const [name, setName] = useState('');
   const [desc, setDesc] = useState('');
-  const [img, setImg] = useState('');
-  const [file, setFile] = useState('');
+  const [img, setImg] = useState<File | null>(null);
   
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const body = new URLSearchParams();
+    if (!img) {
+      alert("Please upload an image.");
+      return;
+    }
+
+    const body = new FormData();
     body.append('name', name);
     body.append('desc', desc);
     body.append('img', img);
     body.append('installer', localStorage.getItem('user') as string);
 
     try {
-      const response = await axios.post('http://localhost:8000/tasks/create-task', body, {headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
+      const response = await axios.post('http://localhost:8000/tasks/create-task', body)
       alert(response.data.message);
     } catch {
       alert("An unexpected error has occurred.");
@@ -28,12 +32,8 @@ function UploadPage() {
 
   const onImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
      if (event.target.files && event.target.files[0]) {
-      setImg(URL.createObjectURL(event.target.files[0]));
-      setFile(URL.createObjectURL(event.target.files[0]));
-    } /* else  if (event.target.value) {
-      setImg(event.target.value);
-      setFile(event.target.value);
-    } */
+      setImg(event.target.files[0]);
+    }
   };
 
   return (
@@ -60,7 +60,7 @@ function UploadPage() {
             onChange={onImageChange}
             required
           />
-          <img src={file} alt="preview image" className='file'/>
+          {img && <img src={URL.createObjectURL(img)} alt="preview image" className='file'/>}
         </fieldset>
 
         <input type='submit' value="Upload"/>

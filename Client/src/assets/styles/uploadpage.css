@@ -5,6 +5,7 @@
     flex-wrap: wrap;
     align-items: center;
     font-size: 18px;
+    overflow-y: scroll;
 }
 
 form {

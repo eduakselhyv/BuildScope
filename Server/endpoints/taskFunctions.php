@@ -36,13 +36,11 @@ function createTask($name, $desc, $img, $installer, $service, $mdb) {
             'installer' => $installer
         ];
 
-        $db->insert($newtask);
+        $data = $db->insert($newtask);
 
-        $id = $db->getLastInsertId();
-
-        $mdb->image->insertOne([
-            'task-id' => $id,
-            'img' => $img
+        $mdb->images->insertOne([
+            'task_id' => $data[0]->id,
+            'img' => new MongoDB\BSON\Binary(file_get_contents($img['tmp_name']), MongoDB\BSON\Binary::TYPE_GENERIC),
         ]);
 
         http_response_code(201);

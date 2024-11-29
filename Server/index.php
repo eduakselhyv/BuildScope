@@ -4,7 +4,7 @@ header("Access-Control-Allow-Origin: http://localhost:3000");
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE"); 
 header("Access-Control-Allow-Headers: Content-Type");
 header("Access-Control-Allow-Credentials: true");
-header('Content-Type: application/x-www-form-urlencoded');
+header('Content-Type: multipart/form-data');
 
 // Include functions
 require 'vendor/autoload.php';
@@ -52,7 +52,7 @@ switch ($request[0]) {
                 echo getTasks($_GET['view'], $_GET['user'], $sbservice, $mdb);
                 break;
             case 'create-task':
-                echo createTask($_POST['name'], $_POST['desc'], $_POST['img'], $_POST['installer'], $sbservice, $mdb);
+                echo createTask($_POST['name'], $_POST['desc'], $_FILES['img'], $_POST['installer'], $sbservice, $mdb);
                 break;
             case 'delete-task':
                 break;
