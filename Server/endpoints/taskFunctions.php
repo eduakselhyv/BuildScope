@@ -14,6 +14,16 @@ function getTasks($view, $user, $service, $mdb) {
 
         $tasks = iterator_to_array($result);
 
+        foreach ($tasks as &$task) {
+            $image = $mdb->images->findOne(['task_id' => $task->id]);
+
+            if ($image) {
+                $task->img = 'data:image/png;base64,' . base64_encode($image->img->getData());
+            } else {
+                $task->img = null;
+            }
+        }
+        
         http_response_code(200);
         return json_encode(['message' => $tasks]);
     }  catch (Error $e) {
