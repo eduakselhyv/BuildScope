@@ -89,13 +89,16 @@ function TasksPage() {
 
   async function displayTasks(view: string) {
     setCurrentView(view);
-
     const response = await axios.get(`http://localhost:8000/tasks/get-tasks?view=${view}&user=${localStorage.getItem('user')}`)
     setTasks(response.data.message);
   }
 
-  function changeStatus(value: string, id: string) {
-    // Send value to server
+  async function changeStatus(value: string, id: string) {
+    const body = new URLSearchParams();
+    body.append('id', id);
+    body.append('status', value);
+
+    await axios.post('http://localhost:8000/tasks/update-status', body, {headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
   }
 
   function handleCommentChange(taskId: string, value: string) {
@@ -165,14 +168,34 @@ function TasksPage() {
 
   // Initialize page
   useEffect(() => {
-    displayTasks("your-tasks");
+    if (localStorage.getItem('role') === 'reviewer') {
+      displayTasks("your-tasks");
+    } else if (localStorage.getItem('role') === 'uploader') {
+      displayTasks("your-uploads");
+    } else {
+      displayTasks("unassigned-tasks");
+    }
+    
   }, []);
 
   return (
     <div className='tasksholder'>
       <nav className='tasknav'>
-        <div className='task-option' onClick={() => displayTasks("your-tasks")}>Your tasks</div>
-        <div className='task-option' onClick={() => displayTasks("unassigned-tasks")}>Unassigned tasks</div>
+      {localStorage.getItem('role') === 'reviewer' && (
+        <div className='task-option' onClick={() => displayTasks("your-tasks")}>
+          Your tasks
+        </div>
+      )}
+      {localStorage.getItem('role') === 'uploader' && (
+        <div className='task-option' onClick={() => displayTasks("your-uploads")}>
+          Your Uploads
+        </div>
+      )}
+      {localStorage.getItem('role') === 'admin' && (
+        <div className='task-option' onClick={() => displayTasks("unassigned-tasks")}>
+          Unassigned tasks
+        </div>
+      )}
       </nav>
 
       <div className='task-content'>
@@ -184,14 +207,19 @@ function TasksPage() {
               <div className='task-info'> 
                 <div className='task-name'>{task.name}</div>
                 <div className='installer-name'>Installer: {task.installer}</div>
+                <div className='task-description'>Description: {task.desc}</div>
 
                 <div className='task-status'>
                   <Label htmlFor="status-select">Status: </Label>
-                  <Dropdown id="status-select" onChange={(e) => changeStatus((e.target as HTMLSelectElement).value, task.id)} placeholder={task.status}>
-                    <Option value="Waiting">Waiting</Option>
-                    <Option value="Approved">Approved</Option>
-                    <Option value="Denied">Denied</Option>
-                  </Dropdown>
+                  {currentView === "your-tasks" ? (
+                    <Dropdown id="status-select" placeholder={task.status}>
+                      <Option onClick={(e) => changeStatus('Waiting', task.id)} value="Waiting">Waiting</Option>
+                      <Option onClick={(e) => changeStatus('Approved', task.id)} value="Approved">Approved</Option>
+                      <Option onClick={(e) => changeStatus('Denied', task.id)} value="Denied">Denied</Option>
+                    </Dropdown>
+                  ) : (
+                    <div>{task.status}</div>
+                  )}
                 </div>
               </div>
 
@@ -214,6 +242,8 @@ function TasksPage() {
                     type="text"
                     maxLength={90}
                     placeholder="Add a comment"
+                    value={newComment[task.id] || ""}
+                    onChange={(e) => handleCommentChange(task.id, e.target.value)}
                     value={newComment[task.id] || ""}
                     onChange={(e) => handleCommentChange(task.id, e.target.value)}
                   />

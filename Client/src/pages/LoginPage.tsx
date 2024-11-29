@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Button, Field, Input } from '@fluentui/react-components';
 import { makeStyles } from '@griffel/react';
 import axios from 'axios';
@@ -56,7 +55,9 @@ function LoginPage() {
       const response = await axios.post('http://localhost:8000/users/login', body, {headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
       
       if (response.status === 200) {
-        localStorage.setItem('user', username);
+        localStorage.setItem('user', response.data.user['username']);
+        localStorage.setItem('role', response.data.user['role']);
+        localStorage.setItem('id', response.data.user['id']);
         window.location.href = '/';
       } else if (response.status === 401) {
         alert("Incorrect password or username!");
@@ -87,7 +88,7 @@ function LoginPage() {
 
   // Register
   async function register() {
-    if (username === "" || password === "") {
+    if (username.trim() === "" || password.trim() === "") {
       alert("Username and password are required!");
       return;
     }
@@ -121,11 +122,11 @@ function LoginPage() {
           <div className={styles.title}>Buildscope</div>
 
           <Field>
-            <Input className={styles.inputCustom} type='text' onChange={(e) => setUsername(e.target.value)} placeholder='Username' />
+            <Input className={styles.inputCustom} type='text' onChange={(e) => setUsername(e.target.value)} placeholder='Username' maxLength={20} required/>
           </Field>
 
           <Field>
-            <Input className={styles.inputCustom} type='password' onChange={(e) => setPassword(e.target.value)} placeholder='Password' />
+            <Input className={styles.inputCustom} type='password' onChange={(e) => setPassword(e.target.value)} placeholder='Password' maxLength={20} required/>
           </Field>
           <div className={styles.buttonHolder}>
             <Button onClick={logIn}>Log in</Button>
@@ -141,11 +142,11 @@ function LoginPage() {
           <div className={styles.title}>Buildscope</div>
 
           <Field>
-            <Input className={styles.inputCustom} type='text' onChange={(e) => setUsername(e.target.value)} placeholder='Username' />
+            <Input className={styles.inputCustom} type='text' onChange={(e) => setUsername(e.target.value)} placeholder='Username'  maxLength={20} required/>
           </Field>
 
           <Field>
-            <Input className={styles.inputCustom} type='password' onChange={(e) => setPassword(e.target.value)} placeholder='Password' />
+            <Input className={styles.inputCustom} type='password' onChange={(e) => setPassword(e.target.value)} placeholder='Password'  maxLength={20} required/>
           </Field>
           <div className={styles.buttonHolder}>
             <Button onClick={register}>Register</Button>

@@ -7,17 +7,13 @@ function login($username, $password, $service) {
         $user = $db->findBy('username', $username)->getResult();
 
         if ($user && password_verify($password, $user[0]->password)) {
-            session_start();
-            $_SESSION['username'] = $username;
-
             http_response_code(200); 
-            return json_encode(['message' => 'Login successful']);
-
+            return json_encode(['message' => 'Login successful', 'user' => $user[0]]);
         } else {
             http_response_code(401);
             return json_encode(['error' => 'Invalid username or password']);
         }
-    }  catch (Error $e) {
+    } catch (Error $e) {
         http_response_code(500);
         return $e->getMessage();
     }
@@ -26,13 +22,12 @@ function login($username, $password, $service) {
 function register($username, $password, $service) {
     $db = $service->initializeDatabase('users', 'id');
 
-    try{
+    try {
         $exists = $db->findBy('username', $username)->getResult();
 
         if ($exists) {
             http_response_code(401);
             return json_encode(['error' => 'User already exists']);
-
         } else {
             $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
 
@@ -54,11 +49,43 @@ function register($username, $password, $service) {
 function users($service) {
     $db = $service->initializeDatabase('users', 'id');
 
-    try{
+    try {
         $users = $db->fetchAll()->getResult();
 
         http_response_code(200); 
         return json_encode(['users' => $users]);
+    } catch (Error $e) {
+        http_response_code(500);
+        return $e->getMessage();
+    }
+}
+
+function deleteUser($id, $service) {
+    $db = $service->initializeDatabase('users', 'id');
+    
+    try {
+        $db->delete($id);
+
+        http_response_code(200); 
+        return json_encode(['message' => 'User deleted!']);
+    } catch (Error $e) {
+        http_response_code(500);
+        return $e->getMessage();
+    }
+}
+
+function updateRole($id, $role, $service) {
+    $db = $service->initializeDatabase('users', 'id');
+
+    $newRole = [
+        'role' => $role
+    ];
+    
+    try {
+        $db->update($id, $newRole);
+
+        http_response_code(200); 
+        return json_encode(['message' => 'Role changed!']);
     } catch (Error $e) {
         http_response_code(500);
         return $e->getMessage();

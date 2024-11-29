@@ -6,7 +6,7 @@ import UploadPage from './pages/UploadPage';
 import UsersPage from './pages/UsersPage';
 
 function App() {
-    const [content, setContent] = useState<React.JSX.Element | null>(null);
+    const [content, setContent] = useState<React.JSX.Element | undefined>(undefined);
 
     // Function for switching active view
     function handleViewChange(newView: string){
