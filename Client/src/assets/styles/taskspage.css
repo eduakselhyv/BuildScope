@@ -78,6 +78,11 @@
     padding: 5px;
 }
 
+.task-description {
+    width: 100%;
+    word-wrap: break-word;
+}
+
 .comment-holder {
 
 }

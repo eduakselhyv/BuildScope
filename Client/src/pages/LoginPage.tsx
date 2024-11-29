@@ -88,7 +88,7 @@ function LoginPage() {
 
   // Register
   async function register() {
-    if (username === "" || password === "") {
+    if (username.trim() === "" || password.trim() === "") {
       alert("Username and password are required!");
       return;
     }
@@ -122,11 +122,11 @@ function LoginPage() {
           <div className={styles.title}>Buildscope</div>
 
           <Field>
-            <Input className={styles.inputCustom} type='text' onChange={(e) => setUsername(e.target.value)} placeholder='Username' />
+            <Input className={styles.inputCustom} type='text' onChange={(e) => setUsername(e.target.value)} placeholder='Username' maxLength={20} required/>
           </Field>
 
           <Field>
-            <Input className={styles.inputCustom} type='password' onChange={(e) => setPassword(e.target.value)} placeholder='Password' />
+            <Input className={styles.inputCustom} type='password' onChange={(e) => setPassword(e.target.value)} placeholder='Password' maxLength={20} required/>
           </Field>
           <div className={styles.buttonHolder}>
             <Button onClick={logIn}>Log in</Button>
@@ -142,11 +142,11 @@ function LoginPage() {
           <div className={styles.title}>Buildscope</div>
 
           <Field>
-            <Input className={styles.inputCustom} type='text' onChange={(e) => setUsername(e.target.value)} placeholder='Username' />
+            <Input className={styles.inputCustom} type='text' onChange={(e) => setUsername(e.target.value)} placeholder='Username'  maxLength={20} required/>
           </Field>
 
           <Field>
-            <Input className={styles.inputCustom} type='password' onChange={(e) => setPassword(e.target.value)} placeholder='Password' />
+            <Input className={styles.inputCustom} type='password' onChange={(e) => setPassword(e.target.value)} placeholder='Password'  maxLength={20} required/>
           </Field>
           <div className={styles.buttonHolder}>
             <Button onClick={register}>Register</Button>

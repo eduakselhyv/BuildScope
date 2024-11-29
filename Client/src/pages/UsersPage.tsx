@@ -32,7 +32,8 @@ const useStyles = makeStyles({
   },
   userContainer: {
     maxHeight: '735px',
-    overflowY: 'auto',
+    overflowY: 'scroll',
+    overflowX: 'hidden',
     width: '100%',
   },
   role: {

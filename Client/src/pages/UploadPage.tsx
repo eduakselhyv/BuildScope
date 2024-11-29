@@ -42,10 +42,10 @@ function UploadPage() {
         <fieldset>
           <legend>Name and Description</legend>
           <Label htmlFor='media-name'>Media's name</Label>
-          <input id='media-name' type='text' onChange={(e) => setName(e.target.value)}  required/>
+          <input id='media-name' type='text' onChange={(e) => setName(e.target.value)} maxLength={30} required/>
 
           <Label htmlFor='media-description'>Description</Label>
-          <textarea id='media-description' onChange={(e) => setDesc(e.target.value)} required></textarea>
+          <textarea id='media-description' onChange={(e) => setDesc(e.target.value)} maxLength={300} required></textarea>
         </fieldset>
 
         <fieldset>

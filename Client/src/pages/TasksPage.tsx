@@ -129,15 +129,34 @@ function TasksPage() {
 
   // Initialize page
   useEffect(() => {
-    displayTasks("your-tasks");
+    if (localStorage.getItem('role') === 'reviewer') {
+      displayTasks("your-tasks");
+    } else if (localStorage.getItem('role') === 'uploader') {
+      displayTasks("your-uploads");
+    } else {
+      displayTasks("unassigned-tasks");
+    }
+    
   }, []);
 
   return (
     <div className='tasksholder'>
       <nav className='tasknav'>
-      <div className='task-option' onClick={() => displayTasks("your-tasks")}>Your tasks</div>
-        <div className='task-option' onClick={() => displayTasks("your-uploads")}>Your Uploads</div>
-        <div className='task-option' onClick={() => displayTasks("unassigned-tasks")}>Unassigned tasks</div>
+      {localStorage.getItem('role') === 'reviewer' && (
+        <div className='task-option' onClick={() => displayTasks("your-tasks")}>
+          Your tasks
+        </div>
+      )}
+      {localStorage.getItem('role') === 'uploader' && (
+        <div className='task-option' onClick={() => displayTasks("your-uploads")}>
+          Your Uploads
+        </div>
+      )}
+      {localStorage.getItem('role') === 'admin' && (
+        <div className='task-option' onClick={() => displayTasks("unassigned-tasks")}>
+          Unassigned tasks
+        </div>
+      )}
       </nav>
 
       <div className='task-content'>
