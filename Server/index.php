@@ -60,9 +60,10 @@ switch ($request[0]) {
                 echo createComment($_POST['taskId'], $_POST['user'], $_POST['comment'], $_POST['date'], $sbservice);
                 break;
             case 'delete-comment':
-                echo deleteComment($_POST['taskId'], $_POST['commentIndex']);
+                echo deleteComment($_POST['taskId'], $_POST['commentIndex'], $sbservice);
                 break;
         }
+        break;
 
     default:
         http_response_code(404);

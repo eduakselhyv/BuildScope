@@ -51,17 +51,21 @@ function createComment($taskId, $user, $comment, $date, $service) {
     $db = $service->initializeDatabase('tasks', 'id');
 
     try {
+        $result = $db->findBy('id', $taskId)->getResult();
+        $task = (array) $result[0]; //  need to convert into an array from an object so it works
 
-        $existingComments = $db->findBy('id', $taskId)->getResult();
-        $existingComments = $existingComments[0]['comments'];
+        $existingComments = $task['comments'];
 
-        $newComment = "{'user': '$user', 'comment': '$comment', 'date': '$date'";
+        $newComment = [
+            'user' => $user,
+            'comment' => $comment,
+            'date' => $date
+        ];
 
-        return json_encode(["message" => $existingComments + $newComment]);
+        $updatedComments = [...$existingComments, $newComment];
 
-        $result = $db->update($taskId, ['comments' => $existingComments + $newComment]);
-
-        if ($result) {
+        $updateResult = $db->update($taskId, ['comments' => $updatedComments]);
+        if ($updateResult) {
             http_response_code(200);
             return json_encode(["message" => "Comment added successfully."]);
         } else {
@@ -74,6 +78,28 @@ function createComment($taskId, $user, $comment, $date, $service) {
     }
 }
 
-function deleteComment($taskId, $commentIndex) {
+function deleteComment($taskId, $commentIndex, $service) {
+    $commentIndex = intval($commentIndex);
+    $db = $service->initializeDatabase('tasks', 'id');
 
+    try {
+        $result = $db->findBy('id', $taskId)->getResult();
+        $task = (array) $result[0];
+        $comments = $task['comments'];
+
+        if (isset($comments[$commentIndex])) {
+            array_splice($comments, $commentIndex, 1);
+            $updateResult = $db->update($taskId, ['comments' => $comments]);
+            if ($updateResult) {
+                http_response_code(200);
+                return json_encode(["message" => "Comment deleted successfully."]);
+            } else {
+                http_response_code(500);
+                return json_encode(["message" => "Failed to delete comment."]);
+            }
+        }
+    } catch (Error $e) {
+        http_response_code(500);
+        return $e->getMessage();
+    }
 }

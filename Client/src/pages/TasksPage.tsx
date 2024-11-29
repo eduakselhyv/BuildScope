@@ -131,23 +131,36 @@ function TasksPage() {
         });
         setTasks(updatedTasks);
         setNewComment((prev) => ({ ...prev, [taskId]: "" }));
-      } catch {
+      } catch (error) {
+        console.error(error);
         alert("An unexpected error has occurred.");
       }
     }
   }
 
   // function for deleting comments
-  function deleteComment(taskId: string, commentIndex: number) {
-    const updatedTasks = tasks.map((task) => {
-      if (task.id === taskId) {
-        const updatedComments = task.comments.filter((_, index) => index !== commentIndex);
-        return { ...task, comments: updatedComments };
+  async function deleteComment(taskId: string, commentIndex: number) {
+    const body = new URLSearchParams();
+      body.append('taskId', taskId);
+      body.append('commentIndex', commentIndex.toString());
+
+      try {
+        const response = await axios.post('http://localhost:8000/comments/delete-comment', body, {headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
+        alert(response.data.message);
+
+        const updatedTasks = tasks.map((task) => {
+          if (task.id === taskId) {
+            const updatedComments = task.comments.filter((_, index) => index !== commentIndex);
+            return { ...task, comments: updatedComments };
+          }
+          return task;
+        });
+      
+        setTasks(updatedTasks);
+      } catch (error) {
+        console.error(error);
+        alert("An unexpected error has occurred.");
       }
-      return task;
-    });
-  
-    setTasks(updatedTasks);
   }
 
   // Initialize page
@@ -190,7 +203,7 @@ function TasksPage() {
                   <div className={styles.comment}>{comment.comment}</div>
                   <div className={styles.commentDate}>{comment.date}</div>
                   <div className={styles.button}>
-                    <Button onClick={() => deleteComment(task.id, index)}>Delete</Button>
+                    <Button onClick={(event) => {event.preventDefault(); deleteComment(task.id, index);}}>Delete</Button>
                   </div>
                 </div>
               ))}
@@ -206,7 +219,7 @@ function TasksPage() {
                   />
                 </Field>
                   <div className={styles.button}>
-                    <Button onClick={() => submitComment(task.id)}>Submit</Button>
+                    <Button onClick={(event) => {event.preventDefault(); submitComment(task.id);}}>Submit</Button>
                   </div>
               </div>
             </div>
