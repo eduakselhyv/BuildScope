@@ -43,75 +43,95 @@ function LoginPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [pageState, setPageState] = useState("");
+  const [error, setError] = useState("");
   const styles = useStyles();
+  const navigate = useNavigate();
 
-  // Log in
+  // Log in with JWT
   async function logIn() {
-    const body = new URLSearchParams();
-    body.append('username', username);
-    body.append('password', password);
+    setError(""); // Reset any previous errors
 
-    // Send login request
     try {
-      const response = await axios.post('http://localhost:8000/users/login', body, {headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
+      const response = await axios.post('http://localhost:8000/users/login', 
+        { username, password },
+        { headers: { 'Content-Type': 'application/json' } }
+      );
       
-      if (response.status === 200) {
-        localStorage.setItem('user', username);
-        window.location.href = '/';
-      } else if (response.status === 401) {
-        alert("Incorrect password or username!");
-      } else {
-        alert("An unexpected error has occurred");
-      }
+      // Store JWT and user info
+      localStorage.setItem('token', response.data.token);
+      localStorage.setItem('user', response.data.username); // Changed to store just the username
+
+      // Set up axios to include token in future requests
+      axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
+
+      // Redirect to home or dashboard
+      navigate('/');
 
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        if (error.response && error.response.status === 401) {
-          alert("Incorrect password or username!");
+      if ((error as any).response) {
+        // The request was made and the server responded with a status code
+        if ((error as any).response.status === 401) {
+          setError("Invalid username or password");
         } else {
-          alert("An unexpected error has occurred");
+          setError("An unexpected error occurred");
         }
+      } else if ((error as any).request) {
+        // The request was made but no response was received
+        setError("No response from server. Please check your network connection.");
       } else {
-        alert("An unexpected error has occurred");
+        // Something happened in setting up the request
+        setError("Error processing login request");
       }
+      console.error("Login error:", error);
+    }
+  }
+
+  // Register with JWT
+  async function register() {
+    setError(""); // Reset any previous errors
+
+    // Basic validation
+    if (username.trim() === "" || password.trim() === "") {
+      setError("Username and password are required!");
+      return;
+    }
+
+    try {
+      const response = await axios.post('http://localhost:8000/users/register', 
+        { username, password },
+        { headers: { 'Content-Type': 'application/json' } }
+      );
+      
+      // Store JWT and user info after successful registration
+      localStorage.setItem('token', response.data.token);
+      localStorage.setItem('user', response.data.username); // Changed to store just the username
+
+      // Set up axios to include token in future requests
+      axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
+
+      // Redirect to home or dashboard
+      navigate('/');
+
+    } catch (error) {
+      if ((error as any).response) {
+        // The request was made and the server responded with a status code
+        if ((error as any).response.status === 401) {
+          setError("Username already exists");
+        } else {
+          setError("An unexpected error occurred");
+        }
+      } else if ((error as any).request) {
+        setError("No response from server. Please check your network connection.");
+      } else {
+        setError("Error processing registration request");
+      }
+      console.error("Registration error:", error);
     }
   }
 
   function changePage() {
-    if (pageState === "") {
-      setPageState("register");
-    } else {
-      setPageState("");
-    }
-  }
-
-  // Register
-  async function register() {
-    if (username === "" || password === "") {
-      alert("Username and password are required!");
-      return;
-    }
-
-    const body = new URLSearchParams();
-    body.append('username', username);
-    body.append('password', password);
-
-    // Send register request
-    try {
-      const response = await axios.post('http://localhost:8000/users/register', body, {headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
-      alert(response.data.message);
-
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        if (error.response && error.response.status === 401) {
-          alert("User already exists!");
-        } else {
-          alert("An unexpected error has occurred");
-        }
-      } else {
-        alert("An unexpected error has occurred");
-      }
-    }
+    setPageState(pageState === "" ? "register" : "");
+    setError(""); // Clear any previous errors
   }
 
   if (pageState === "") {
@@ -120,12 +140,24 @@ function LoginPage() {
         <div className={styles.loginCard}>
           <div className={styles.title}>Buildscope</div>
 
+          {error && <div style={{ color: 'red', marginBottom: '10px' }}>{error}</div>}
+
           <Field>
-            <Input className={styles.inputCustom} type='text' onChange={(e) => setUsername(e.target.value)} placeholder='Username' />
+            <Input 
+              className={styles.inputCustom} 
+              type='text' 
+              onChange={(e) => setUsername(e.target.value)} 
+              placeholder='Username' 
+            />
           </Field>
 
           <Field>
-            <Input className={styles.inputCustom} type='password' onChange={(e) => setPassword(e.target.value)} placeholder='Password' />
+            <Input 
+              className={styles.inputCustom} 
+              type='password' 
+              onChange={(e) => setPassword(e.target.value)} 
+              placeholder='Password' 
+            />
           </Field>
           <div className={styles.buttonHolder}>
             <Button onClick={logIn}>Log in</Button>
@@ -140,12 +172,24 @@ function LoginPage() {
         <div className={styles.loginCard}>
           <div className={styles.title}>Buildscope</div>
 
+          {error && <div style={{ color: 'red', marginBottom: '10px' }}>{error}</div>}
+
           <Field>
-            <Input className={styles.inputCustom} type='text' onChange={(e) => setUsername(e.target.value)} placeholder='Username' />
+            <Input 
+              className={styles.inputCustom} 
+              type='text' 
+              onChange={(e) => setUsername(e.target.value)} 
+              placeholder='Username' 
+            />
           </Field>
 
           <Field>
-            <Input className={styles.inputCustom} type='password' onChange={(e) => setPassword(e.target.value)} placeholder='Password' />
+            <Input 
+              className={styles.inputCustom} 
+              type='password' 
+              onChange={(e) => setPassword(e.target.value)} 
+              placeholder='Password' 
+            />
           </Field>
           <div className={styles.buttonHolder}>
             <Button onClick={register}>Register</Button>

@@ -29,8 +29,21 @@ function TasksPage() {
   async function displayTasks(view: string) {
     setCurrentView(view);
 
-    const response = await axios.get(`http://localhost:8000/tasks/get-tasks?view=${view}&user=${localStorage.getItem('user')}`)
-    setTasks(response.data.message);
+    try {
+        const response = await axios.get(`http://localhost:8000/tasks/get-tasks?view=${view}&user=${localStorage.getItem('user')}`, {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+        });
+        if (response.data.message) {
+            setTasks(response.data.message);
+        } else {
+            setTasks([]);
+        }
+    } catch (error) {
+        console.error('Error fetching tasks:', error);
+        setTasks([]);
+    }
   }
 
   function changeStatus(value: string, id: string) {
@@ -52,7 +65,7 @@ function TasksPage() {
       <div className='task-content'>
         {
           tasks.map((task) => (
-            <div className='task-item'>
+            <div key={task._id} className='task-item'>
               <img className='task-img' src={task.img}/>
 
               <div className='task-info'> 
@@ -71,8 +84,8 @@ function TasksPage() {
         
               <div className='task-comments'>
                 Comments:
-                {task.comments.map((comment) => (
-                  <div className='comment-holder'>
+                {task.comments.map((comment, index) => (
+                  <div key={index} className='comment-holder'>
                     <div className='comment-user'>{comment.user}</div>
                     <div className='comment'>{comment.comment}</div>
                     <div className='comment-date'>{comment.date}</div>

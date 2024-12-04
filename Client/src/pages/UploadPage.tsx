@@ -7,33 +7,42 @@ function UploadPage() {
   const [name, setName] = useState('');
   const [desc, setDesc] = useState('');
   const [img, setImg] = useState('');
-  const [file, setFile] = useState('');
+  const [file, setFile] = useState<File | null>(null);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const body = new URLSearchParams();
-    body.append('name', name);
-    body.append('desc', desc);
-    body.append('img', img);
-    body.append('installer', localStorage.getItem('user') as string);
+    const formData = new FormData();
+    formData.append('name', name);
+    formData.append('desc', desc);
+    if (file) {
+      formData.append('img', file);
+    }
+    formData.append('installer', localStorage.getItem('user') as string);
 
     try {
-      const response = await axios.post('http://localhost:8000/tasks/create-task', body, {headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
-      alert(response.data.message);
-    } catch {
+      const response = await axios.post('http://localhost:8000/tasks/create-task', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      if (response.data.message) {
+        alert(response.data.message);
+      } else {
+        alert("Upload successful");
+      }
+    } catch (error) {
+      console.error('Error uploading:', error);
       alert("An unexpected error has occurred.");
     }
   };
 
   const onImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-     if (event.target.files && event.target.files[0]) {
+    if (event.target.files && event.target.files[0]) {
       setImg(URL.createObjectURL(event.target.files[0]));
-      setFile(URL.createObjectURL(event.target.files[0]));
-    } /* else  if (event.target.value) {
-      setImg(event.target.value);
-      setFile(event.target.value);
-    } */
+      setFile(event.target.files[0]);
+    }
   };
 
   return (
@@ -69,7 +78,7 @@ function UploadPage() {
             pattern="https?://.+" 
             onChange={onImageChange}
           /> */}
-          <img src={file} alt="preview image" className='file'/>
+          <img src={img} alt="preview image" className='file'/>
         </fieldset>
 
         <input type='submit' value="Upload"/>

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { makeStyles } from '@griffel/react';
 import { Card, Text, Spinner } from '@fluentui/react-components';
 
@@ -39,28 +40,37 @@ function UsersPage() {
   const classes = useStyles();
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    fetch('http://localhost:8000/users/users')
-      .then((response) => {
+    const fetchUsers = async () => {
+      try {
+        const response = await fetch('http://localhost:8000/users/users', {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        });
         if (!response.ok) {
+          if (response.status === 401) {
+            navigate('/login');
+          }
           throw new Error('Failed to fetch users');
         }
-        return response.json();
-      })
-      .then((data) => {
+        const data = await response.json();
         const Users: User[] = data.users.map((user: any) => ({
           id: user.id,
           username: user.username,
         }));
         setUsers(Users);
-        setLoading(false);
-      })
-      .catch((error) => {
+      } catch (error) {
         console.error('Error fetching users:', error);
+      } finally {
         setLoading(false);
-      });
-  }, []);
+      }
+    };
+
+    fetchUsers();
+  }, [navigate]);
 
   if (loading) {
     return <Spinner className={classes.spinner} label="Loading users..." />;

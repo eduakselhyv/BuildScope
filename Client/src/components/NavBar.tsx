@@ -17,6 +17,7 @@ export function NavBar({ changeView }: InputProps) {
   // Logout function (change when server is implemented)
   function logout() {
     localStorage.removeItem('user');
+    localStorage.removeItem('token');
     navigate('/login');
   }
 

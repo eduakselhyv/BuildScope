@@ -1,10 +1,16 @@
 <?php
 // CORS
 header("Access-Control-Allow-Origin: http://localhost:3000");
-header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE"); 
-header("Access-Control-Allow-Headers: Content-Type");
+header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS"); 
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
 header("Access-Control-Allow-Credentials: true");
 header('Content-Type: application/x-www-form-urlencoded');
+header('Content-Type: application/json');
+
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit;
+}
 
 // Include functions
 require 'vendor/autoload.php';
@@ -25,17 +31,36 @@ $sbservice = new PHPSupabase\Service(
 $method = $_SERVER['REQUEST_METHOD'];
 $request = explode('/', trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/'));
 
+// Assuming you have a function to get request data
+function getRequestData() {
+    return json_decode(file_get_contents('php://input'), true);
+}
+
+$requestData = getRequestData();
+
 switch ($request[0]) {
     case 'users':
         switch ($request[1]) {
             case 'login':
-                echo login($_POST['username'], $_POST['password'], $sbservice);
+                if (!isset($requestData['username']) || !isset($requestData['password'])) {
+                    http_response_code(400);
+                    echo json_encode(['error' => 'Username and password are required']);
+                    exit;
+                }
+                echo login($requestData['username'], $requestData['password'], $sbservice);
                 break;
             case 'register':
-                echo register($_POST['username'], $_POST['password'], $sbservice);
+                if (!isset($requestData['username']) || !isset($requestData['password'])) {
+                    http_response_code(400);
+                    echo json_encode(['error' => 'Username and password are required']);
+                    exit;
+                }
+                echo register($requestData['username'], $requestData['password'], $sbservice);
                 break;
             case 'users':
-                echo users($sbservice);
+                $token = getBearerToken();
+                echo users($sbservice, $token);
+                break;
         }
         break;
 
@@ -45,7 +70,12 @@ switch ($request[0]) {
                 echo getTasks($_GET['view'], $_GET['user'], $sbservice, $mdb);
                 break;
             case 'create-task':
-                echo createTask($_POST['name'], $_POST['desc'], $_POST['img'], $_POST['installer'], $sbservice, $mdb);
+                if (!isset($_POST['name']) || !isset($_POST['desc']) || !isset($_FILES['img']) || !isset($_POST['installer'])) {
+                    http_response_code(400);
+                    echo json_encode(['error' => 'All fields are required']);
+                    exit;
+                }
+                echo createTask($_POST['name'], $_POST['desc'], $_FILES['img'], $_POST['installer'], $sbservice, $mdb);
                 break;
             case 'delete-task':
                 break;
@@ -58,4 +88,16 @@ switch ($request[0]) {
         http_response_code(404);
         echo json_encode(['error' => 'Endpoint not found']);
         break;
+}
+
+// Function to get Bearer token from Authorization header
+function getBearerToken() {
+    $headers = apache_request_headers();
+    if (isset($headers['Authorization'])) {
+        $matches = [];
+        if (preg_match('/Bearer\s(\S+)/', $headers['Authorization'], $matches)) {
+            return $matches[1];
+        }
+    }
+    return null;
 }
