@@ -91,3 +91,20 @@ function updateRole($id, $role, $service) {
         return $e->getMessage();
     }
 }
+
+function getReviewers($service) {
+    $db = $service->initializeDatabase('users', 'id');
+    try {
+        $result = $db->findBy('role', 'reviewer')->getResult();
+        $reviewers = []; //iterator_to_array($result)
+        for ($x = 0; $x <= count(iterator_to_array($result))-1; $x++) {
+            $reviewers[] = $result[$x]->username;
+          }
+        $final = iterator_to_array($reviewers);
+        http_response_code(200);
+        return json_encode(['message' => $final]);
+    }  catch (Error $e) {
+        http_response_code(500);
+        return $e->getMessage();
+    }
+}

@@ -134,3 +134,35 @@ function deleteComment($taskId, $commentIndex, $service) {
         return $e->getMessage();
     }
 }
+
+function assignToTask($id, $name, $service) {
+    $db = $service->initializeDatabase('tasks', 'id');
+    try {
+        $updatedtask = [
+            'assigned_to' => $name,
+            'status' => 'waiting'
+        ];
+
+        $data = $db->update($id, $updatedtask);
+
+        http_response_code(200);
+        return json_encode(["message" => "user $name asinged to task by id $id"]);
+    } catch (Error $e) {
+        http_response_code(500);
+        return $e->getMessage();
+    }
+}
+
+function deleteTask($id, $service) {
+    $db = $service->initializeDatabase('tasks', 'id');
+    
+    try {
+        $db->delete($id);
+
+        http_response_code(200); 
+        return json_encode(['message' => 'Task deleted!']);
+    } catch (Error $e) {
+        http_response_code(500);
+        return $e->getMessage();
+    }
+}
