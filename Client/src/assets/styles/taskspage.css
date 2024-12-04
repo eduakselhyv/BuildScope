@@ -102,3 +102,12 @@
 .new-comment {
     
 }
+
+.assign {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    overflow: hidden;
+    overflow-y: auto;
+    margin-top: 20;
+}

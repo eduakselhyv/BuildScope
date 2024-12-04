@@ -86,6 +86,9 @@ function TasksPage() {
   const [currentView, setCurrentView] = useState(""); // Variable for storing tasks
   const [newComment, setNewComment] = useState<{ [key: string]: string }>({}); // Variable for storing new comments
   const styles = useStyles();
+  const [assigning, setAssigning] = useState(true);
+  const [reviewers, setReviewers] = useState([]);
+  const [assignTo, setAssignTo] = useState("");
 
   async function displayTasks(view: string) {
     setCurrentView(view);
@@ -166,6 +169,47 @@ function TasksPage() {
       }
   }
 
+  async function displayReviwers(id: string) {
+    const response = await axios.get(`http://localhost:8000/users/reviewers`)
+    setReviewers(response.data.message);
+    setAssignTo(id);
+    //console.log(reviewers, "and", response.data.message, "are same");
+    setAssigning(false);
+  }
+
+  async function assignToTask(reviewer: string) {
+    const body = new URLSearchParams();
+    body.append('id', assignTo);
+    body.append('reviewer', reviewer);
+    console.log(body);
+    const response = await axios.post(`http://localhost:8000/tasks/assign-to`, body, {headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
+    alert(response.data.message);
+    setReviewers([]);
+    setAssignTo("");
+    setAssigning(true);
+  }
+
+  function cancel() {
+    setReviewers([]);
+    setAssignTo("");
+    setAssigning(true);
+  }
+
+  async function deleteTask(id: string) {
+    const body = new URLSearchParams();
+    body.append('id', id);
+
+    try {
+      await axios.post('http://localhost:8000/tasks/delete-task', body, {headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
+
+      setTasks(tasks => 
+        tasks.filter(task => task.id !== id)
+      );
+    } catch (error) {
+      alert("An unexpected error has occurred");
+    }
+  }
+
   // Initialize page
   useEffect(() => {
     if (localStorage.getItem('role') === 'reviewer') {
@@ -197,63 +241,76 @@ function TasksPage() {
         </div>
       )}
       </nav>
+      {assigning 
+      ? <div className='task-content'>
+      {
+        tasks.map((task) => (
+          <div className='task-item'>
+            <img className='task-img' src={task.img} alt={task.name}/>
 
-      <div className='task-content'>
-        {
-          tasks.map((task) => (
-            <div className='task-item'>
-              <img className='task-img' src={task.img} alt={task.name}/>
-
-              <div className='task-info'> 
-                <div className='task-name'>{task.name}</div>
-                <div className='installer-name'>Installer: {task.installer}</div>
-                <div className='task-description'>Description: {task.desc}</div>
-
-                <div className='task-status'>
-                  <Label htmlFor="status-select">Status: </Label>
-                  {currentView === "your-tasks" ? (
-                    <Dropdown id="status-select" placeholder={task.status}>
-                      <Option onClick={(e) => changeStatus('Waiting', task.id)} value="Waiting">Waiting</Option>
-                      <Option onClick={(e) => changeStatus('Approved', task.id)} value="Approved">Approved</Option>
-                      <Option onClick={(e) => changeStatus('Denied', task.id)} value="Denied">Denied</Option>
-                    </Dropdown>
-                  ) : (
-                    <div>{task.status}</div>
-                  )}
+            <div className='task-info'> 
+              <div className='task-name'>{task.name}</div>
+              <div className='installer-name'>Installer: {task.installer}</div>
+              <div className='task-description'>Description: {task.desc}</div>
+              {localStorage.getItem('role') === 'admin' && (
+                <div>
+                  <button className='assignment-button' onClick={(e) => displayReviwers(task.id)}>ASSIGN</button>
+                  <button className='delete-button' onClick={(e) => deleteTask(task.id)}>DELETE</button>
                 </div>
-              </div>
-
-            <div className={styles.taskComments}>
-              <div className={styles.title}>Comments:</div>
-              {task.comments.map((comment, index) => (
-                <div className={styles.commentHolder} key={index}>
-                  <div className={styles.commentUser}>{comment.user}</div>
-                  <div className={styles.comment}>{comment.comment}</div>
-                  <div className={styles.commentDate}>{comment.date}</div>
-                  <div className={styles.button}>
-                    <Button onClick={(event) => {event.preventDefault(); deleteComment(task.id, index);}}>Delete</Button>
-                  </div>
-                </div>
-              ))}
-              <div className={styles.newComment}>
-                <Field>
-                  <Input
-                    className={styles.input}
-                    type="text"
-                    maxLength={90}
-                    placeholder="Add a comment"
-                    value={newComment[task.id] || ""}
-                    onChange={(e) => handleCommentChange(task.id, e.target.value)}
-                  />
-                </Field>
-                  <div className={styles.button}>
-                    <Button onClick={(event) => {event.preventDefault(); submitComment(task.id);}}>Submit</Button>
-                  </div>
+              )}
+              <div className='task-status'>
+                <Label htmlFor="status-select">Status: </Label>
+                {currentView === "your-tasks" ? (
+                  <Dropdown id="status-select" placeholder={task.status}>
+                    <Option onClick={(e) => changeStatus('Waiting', task.id)} value="Waiting">Waiting</Option>
+                    <Option onClick={(e) => changeStatus('Approved', task.id)} value="Approved">Approved</Option>
+                    <Option onClick={(e) => changeStatus('Denied', task.id)} value="Denied">Denied</Option>
+                  </Dropdown>
+                ) : (
+                  <div>{task.status}</div>
+                )}
               </div>
             </div>
+
+          <div className={styles.taskComments}>
+            <div className={styles.title}>Comments:</div>
+            {task.comments.map((comment, index) => (
+              <div className={styles.commentHolder} key={index}>
+                <div className={styles.commentUser}>{comment.user}</div>
+                <div className={styles.comment}>{comment.comment}</div>
+                <div className={styles.commentDate}>{comment.date}</div>
+                <div className={styles.button}>
+                  <Button onClick={(event) => {event.preventDefault(); deleteComment(task.id, index);}}>Delete</Button>
+                </div>
+              </div>
+            ))}
+            <div className={styles.newComment}>
+              <Field>
+                <Input
+                  className={styles.input}
+                  type="text"
+                  maxLength={90}
+                  placeholder="Add a comment"
+                  value={newComment[task.id] || ""}
+                  onChange={(e) => handleCommentChange(task.id, e.target.value)}
+                />
+              </Field>
+                <div className={styles.button}>
+                  <Button onClick={(event) => {event.preventDefault(); submitComment(task.id);}}>Submit</Button>
+                </div>
+            </div>
           </div>
-        ))}
-      </div>
+        </div>
+      ))}
+    </div>
+    : <div>
+        {reviewers.map((reviewer) => (
+        <div className="assign">
+          <div>{reviewer}</div>
+          <button onClick={(e) => assignToTask(reviewer)}>assign</button>
+        </div>))}
+        <button onClick={(e) => cancel()}>cancel</button>
+      </div>}
     </div>
   );
 }

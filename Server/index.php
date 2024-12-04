@@ -43,6 +43,9 @@ switch ($request[0]) {
             case 'updaterole':
                 echo updateRole($_POST['id'], $_POST['role'], $sbservice);
                 break;
+            case 'reviewers':
+                echo getReviewers($sbservice);
+                break;
         }
         break;
 
@@ -55,9 +58,13 @@ switch ($request[0]) {
                 echo createTask($_POST['name'], $_POST['desc'], $_FILES['img'], $_POST['installer'], $sbservice, $mdb);
                 break;
             case 'delete-task':
+                echo deleteTask($_POST['id'], $sbservice);
                 break;
             case 'update-status':
                 echo updateStatus($_POST['id'], $_POST['status'], $sbservice);
+                break;
+            case 'assign-to':
+                echo assignToTask($_POST['id'], $_POST['reviewer'], $sbservice);
                 break;
         }
         break;
