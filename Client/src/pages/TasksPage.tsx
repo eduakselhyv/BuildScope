@@ -8,7 +8,12 @@ import {
   Option,
   Field,
   Input,
-  Button
+  Button, 
+  Card, 
+  Text,
+  Spinner, 
+  CardFooter, 
+  SelectProps
 } from "@fluentui/react-components";
 import { makeStyles } from '@griffel/react';
 import axios from 'axios';
@@ -59,6 +64,35 @@ const useStyles = makeStyles({
     background: 'rgb(0, 0, 0, 0.1)',
     marginTop: '3px',
     width: '100px'
+  },
+  container: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    padding: '20px',
+  },
+  userCard: {
+    width: '300px',
+    marginBottom: '10px',
+    padding: '15px',
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    border: '1px solid #ccc',
+    borderRadius: '8px',
+    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+  },
+  spinner: {
+    marginTop: '20px',
+  },
+  userContainer: {
+    maxHeight: '735px',
+    overflowY: 'scroll',
+    overflowX: 'hidden',
+    width: '100%',
+  },
+  role: {
+    color: '#d13438'
   }
 });
 
@@ -254,8 +288,12 @@ function TasksPage() {
               <div className='task-description'>Description: {task.desc}</div>
               {localStorage.getItem('role') === 'admin' && (
                 <div>
-                  <button className='assignment-button' onClick={(e) => displayReviwers(task.id)}>ASSIGN</button>
-                  <button className='delete-button' onClick={(e) => deleteTask(task.id)}>DELETE</button>
+                  <div className={styles.button}>
+                    <Button className='assignment-button' onClick={(e) => displayReviwers(task.id)}>ASSIGN</Button>
+                  </div>
+                  <div className={styles.button}>
+                    <Button className='delete-button' onClick={(e) => deleteTask(task.id)}>DELETE</Button>
+                  </div>
                 </div>
               )}
               <div className='task-status'>
@@ -279,9 +317,10 @@ function TasksPage() {
                 <div className={styles.commentUser}>{comment.user}</div>
                 <div className={styles.comment}>{comment.comment}</div>
                 <div className={styles.commentDate}>{comment.date}</div>
-                <div className={styles.button}>
-                  <Button onClick={(event) => {event.preventDefault(); deleteComment(task.id, index);}}>Delete</Button>
-                </div>
+                {localStorage.getItem("name") === comment.user && (
+                  <div className={styles.button}>
+                    <Button onClick={(event) => {event.preventDefault(); deleteComment(task.id, index);}}>Delete</Button>
+                  </div>)}
               </div>
             ))}
             <div className={styles.newComment}>
@@ -305,11 +344,16 @@ function TasksPage() {
     </div>
     : <div>
         {reviewers.map((reviewer) => (
-        <div className="assign">
-          <div>{reviewer}</div>
-          <button onClick={(e) => assignToTask(reviewer)}>assign</button>
-        </div>))}
-        <button onClick={(e) => cancel()}>cancel</button>
+            <Card key={reviewer} className={styles.userCard}>
+            <Text>{reviewer}</Text>
+            <CardFooter>
+              <div className={styles.button}>
+                <Button onClick={(e) => assignToTask(reviewer)}>Assign</Button>
+              </div>
+            </CardFooter>
+          </Card>
+        ))}
+        <Button onClick={(e) => cancel()}>Cancel</Button>
       </div>}
     </div>
   );
