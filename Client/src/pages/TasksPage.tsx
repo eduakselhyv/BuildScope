@@ -290,7 +290,7 @@ function TasksPage() {
               <div className='installer-name'>Installer: {task.installer}</div>
               <div className='installer-name'>Assigned: {task.assigned_to}</div>
               <div className='task-description'>Description: {task.desc}</div>
-              {localStorage.getItem('role') === 'admin' && (
+              {currentView === "unassigned-tasks" && (
                 <div>
                   <div className={styles.button}>
                     <Button className='assignment-button' onClick={(e) => displayReviwers(task.id)}>ASSIGN</Button>
