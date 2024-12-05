@@ -259,6 +259,9 @@ function TasksPage() {
   return (
     <div className='tasksholder'>
       <nav className='tasknav'>
+        <div className='task-option' onClick={() => displayTasks("all-tasks")}>
+          All tasks
+        </div>
       {localStorage.getItem('role') === 'reviewer' && (
         <div className='task-option' onClick={() => displayTasks("your-tasks")}>
           Your tasks
@@ -285,6 +288,7 @@ function TasksPage() {
             <div className='task-info'> 
               <div className='task-name'>{task.name}</div>
               <div className='installer-name'>Installer: {task.installer}</div>
+              <div className='installer-name'>Assigned: {task.assigned_to}</div>
               <div className='task-description'>Description: {task.desc}</div>
               {localStorage.getItem('role') === 'admin' && (
                 <div>

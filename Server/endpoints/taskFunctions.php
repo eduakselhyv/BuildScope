@@ -8,6 +8,8 @@ function getTasks($view, $user, $service, $mdb) {
             $result = $db->findBy('assigned_to', $user)->getResult();
         } else if($view === "your-uploads") {
             $result = $db->findBy('installer', $user)->getResult();
+        } else if($view === "all-tasks") {
+            $result = $db->fetchAll()->getResult();
         } else {
             $result = $db->findBy('assigned_to', "")->getResult();
         }
