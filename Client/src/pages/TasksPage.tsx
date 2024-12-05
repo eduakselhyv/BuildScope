@@ -317,7 +317,7 @@ function TasksPage() {
                 <div className={styles.commentUser}>{comment.user}</div>
                 <div className={styles.comment}>{comment.comment}</div>
                 <div className={styles.commentDate}>{comment.date}</div>
-                {localStorage.getItem("name") === comment.user && (
+                {localStorage.getItem("user") === comment.user && (
                   <div className={styles.button}>
                     <Button onClick={(event) => {event.preventDefault(); deleteComment(task.id, index);}}>Delete</Button>
                   </div>)}
